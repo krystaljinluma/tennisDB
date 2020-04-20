@@ -1,0 +1,32 @@
+.header-container, .results-container {
+  display: flex;
+  flex-flow: column wrap;
+  /* margin-top: 10px; */
+}
+
+.header-container .headers, .results-container .playerResults, .results-container .gsInfo {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 40px;
+}
+
+.playerResults .name, .playerResults .hand, .playerResults .country, .playerResults .birthday, .playerResults .atp_id, .headers .header {
+  flex: 1 0 20%;
+}
+
+.header-container, .jumbotron {
+  margin-top: 10px;
+}
+
+.playerName {
+  padding: 0px;
+}
+
+#playerinfo-container {
+  display: none;
+}
+
+.gsInfo .wins, .gsInfo .losses {
+  flex: 1 0 50%
+}
