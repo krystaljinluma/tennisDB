@@ -34,12 +34,16 @@ export default class Players extends React.Component {
 	}
 
 	investigatePlayer(e) {
+		document.getElementById('playerinfo-container').style.display = 'none';
+		document.getElementById('olympic-container').style.display = 'none';
 		//make sure states are set for subsequent function calls
 		this.setState({
 			playerName: e.target.firstChild.nodeValue,
 			playerId: e.target.parentElement.parentElement.firstChild.textContent
 		},() => {
 			//call function to get GS tournament wins
+			console.log(this.state.playerId)
+			console.log(this.state.playerName)
 			this.getGSWins() 
 		});
 	}
@@ -110,7 +114,7 @@ export default class Players extends React.Component {
 			if (playerList.length == 0) return;
 			//player can participate in multiple olympics and events, many rows possible
 			let olympicInfoDiv = playerList.map((playerObj, i) =>
-			<OlypmicsRow games={playerObj.Games} event={playerObj.Event} medal={playerObj.Medal}/>
+			<OlypmicsRow games={playerObj.game} event={playerObj.event} medal={playerObj.medal}/>
 			);
 			this.setState({
 				olympicInfo: olympicInfoDiv
@@ -124,6 +128,10 @@ export default class Players extends React.Component {
 	}
 
 	submitPlayer() {
+		document.getElementById('playerHeaders').style.display = 'none';
+		document.getElementById('playerResults').style.display = 'none';
+		document.getElementById('playerinfo-container').style.display = 'none';
+		document.getElementById('olympic-container').style.display = 'none';
 		fetch("http://localhost:8081/players/" + this.state.playerName,
 		{
 			method: 'GET'

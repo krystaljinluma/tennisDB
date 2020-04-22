@@ -45,96 +45,98 @@ function getTopInGenre(req, res) {
 /* ---- (Players) ---- */
 function getPlayers(req, res) {
   var name = req.params.player;
-  var data = []
-  data.push({ player_id: 'atp_104745',  name: 'Rafael Nadal', hand: 'L', country: 'ESP', birthday: '6/3/1986' })
-  res.json(data);
 
-  // var query = `
-  //   SELECT name, hand, country, birthday
-  //   FROM Player
-  //   WHERE name = '${name}'
-  // `;
-  // connection.query(query, function(err, rows, fields) {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
+  var query = `
+    SELECT *
+    FROM Player
+    WHERE name = '${name}'
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 };
 
 /* ---- (GS Tournament Wins) ---- */
 function getGSWins(req, res) {
   var id = req.params.id;
-  var data = []
-  data.push({ gs_wins: '19'})
-  res.json(data);
 
-  // var query = `
-  //   WITH player_matches AS (
-  //         SELECT *
-  //         FROM Stats
-  //         WHERE player_id = '${id}'
-  //         )
-  //    SELECT COUNT(*) AS gs_wins
-  //    FROM player_matches
-  //    JOIN Matches USING(match_id)
-  //    WHERE round = 'The Final' AND winner = 'TRUE'
-  // `;
-  // connection.query(query, function(err, rows, fields) {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
+  var query = `
+    SELECT COUNT(*) AS gs_wins
+    FROM (
+      SELECT *
+      FROM Stats
+      WHERE player_id = '${id}'
+    ) AS player_matches
+    JOIN Matches USING(match_id)
+    WHERE round = 'The Final' AND winner = 'T'
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 };
 
 /* ---- (GS Wins - Losses) ---- */
 function getGSInfo(req, res) {
   var id = req.params.id;
-  var data = []
-  data.push({ wins: '257', losses: '39'})
-  res.json(data);
 
-  // var query = `
-  //   WITH player_matches AS (
-  //     SELECT *
-  //     FROM Stats
-  //     WHERE player_id = '${id}'
-  //   )
-  //   SELECT COUNT('TRUE') AS wins, COUNT('FALSE') AS losses
-  //   FROM player_matches
-  //   GROUP BY winner;
-  // `;
-  // connection.query(query, function(err, rows, fields) {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
+  var query = `
+  SELECT COUNT(*) AS wins, losses
+  FROM (
+    SELECT *
+    FROM Stats
+    WHERE player_id = '${id}'
+  ) AS player_matches
+  JOIN (
+    (
+      SELECT COUNT(*) as losses
+      FROM (
+      SELECT *
+      FROM Stats
+      WHERE player_id = '${id}'
+    ) AS player_matches
+      GROUP BY winner
+    HAVING winner = 'F'
+      ) AS lose
+  )
+  GROUP BY winner
+  HAVING winner = 'T'
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 };
 
 /* ---- (GS Wins - Losses) ---- */
 function getOlympicInfo(req, res) {
   var name = req.params.name;
-  var data = []
-  data.push({ Games: '2004 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
-  data.push({ Games: '2008 Summer', Event: "Tennis Men's Singles", Medal: "Gold"})
-  data.push({ Games: '2008 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
-  data.push({ Games: '2016 Summer', Event: "Tennis Men's Singles", Medal: "NA"})
-  data.push({ Games: '2016 Summer', Event: "Tennis Men's Doubles", Medal: "Gold"})
-  res.json(data);
+  // var data = []
+  // data.push({ Games: '2004 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
+  // data.push({ Games: '2008 Summer', Event: "Tennis Men's Singles", Medal: "Gold"})
+  // data.push({ Games: '2008 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
+  // data.push({ Games: '2016 Summer', Event: "Tennis Men's Singles", Medal: "NA"})
+  // data.push({ Games: '2016 Summer', Event: "Tennis Men's Doubles", Medal: "Gold"})
+  // res.json(data);
 
-  // var query = `
-  //   SELECT Games, Event, Medal
-  //   FROM Olympics
-  //   WHERE name = '${name}';
-  // `;
-  // connection.query(query, function(err, rows, fields) {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
+  var query = `
+    SELECT game, event, medal
+    FROM Olympic
+    WHERE player_name = '${name}';
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 };
 
 /* ---- (Best Genres) ---- */
