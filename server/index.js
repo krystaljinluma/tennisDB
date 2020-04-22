@@ -23,16 +23,8 @@ app.get('/genres', routes.getAllGenres);
 
 
 
-
-
-
 /* ---- Q1b (Dashboard) ---- */
 app.get('/genres/:genre', routes.getTopInGenre); // Hint: Replace () => {} with the appropriate route handler.
-
-
-
-
-
 
 
 
@@ -50,11 +42,24 @@ app.get('/gsinfo/:id', routes.getGSInfo);
 app.get('/olympicinfo/:name', routes.getOlympicInfo);
 
 
+/* ---- (Matches) ---- */
+
+/* ---- (Specific Round stats) ---- */
+app.get('/matchstats/:tournament/:year/:round/', routes.getMatchStats)
+
+
+/* ---- (Specific Player stats) ---- */
+app.get('/playerstats/:tournament/:year/:player/', routes.getPlayerStats)
+
+/* ---- (Top10 Player Matches) ---- */
+app.get('/topten', routes.getTopTen)
+
+/* ---- (Top10 Player Matches) ---- */
+app.get('/summarizetournament/:tournament/:year', routes.summarizeStats)
+
+
 /* ---- (Best Genre) ---- */
 app.get('/decades', routes.getDecades);
-
-
-
 
 
 
