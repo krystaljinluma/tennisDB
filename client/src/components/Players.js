@@ -34,11 +34,12 @@ export default class Players extends React.Component {
 	}
 
 	investigatePlayer(e) {
+		//make sure states are set for subsequent function calls
 		this.setState({
 			playerName: e.target.firstChild.nodeValue,
 			playerId: e.target.parentElement.parentElement.firstChild.textContent
 		},() => {
-			//call larger function here
+			//call function to get GS tournament wins
 			this.getGSWins() 
 		});
 	}
@@ -46,15 +47,14 @@ export default class Players extends React.Component {
 	getGSWins() {
 		fetch("http://localhost:8081/gswins/" + this.state.playerId,
 		{
-			method: 'GET' // The type of HTTP request.
+			method: 'GET'
 		}).then(res => {
-			// Convert the response data to a JSON.
 			return res.json();
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		}).then(playerList => {
 			if (!playerList) return;
+			//will only be one row produced here
 			let gsWinsDiv = playerList.map((playerObj, i) =>
 			<GrandSlamWinRow wins={playerObj.gs_wins} />
 			);
@@ -65,7 +65,6 @@ export default class Players extends React.Component {
 				this.getGSInfo()
 			});
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		});
 	}
@@ -73,25 +72,26 @@ export default class Players extends React.Component {
 	getGSInfo() {
 		fetch("http://localhost:8081/gsinfo/" + this.state.playerId,
 		{
-			method: 'GET' // The type of HTTP request.
+			method: 'GET'
 		}).then(res => {
-			// Convert the response data to a JSON.
 			return res.json();
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		}).then(playerList => {
 			if (!playerList) return;
+			//will only be one row produced here
 			let gsInfoDiv = playerList.map((playerObj, i) =>
 			<GrandSlamRow wins={playerObj.wins} losses={playerObj.losses}/>
 			);
 			this.setState({
 				gsInfo: gsInfoDiv
 			}, () => {
+				//reveal player GS stats containers on page
+				document.getElementById('playerinfo-container').style.display = 'inline';
+				//get olympic info for player
 				this.getOlympicInfo();
 			});
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		});
 	}
@@ -99,53 +99,58 @@ export default class Players extends React.Component {
 	getOlympicInfo() {
 		fetch("http://localhost:8081/olympicinfo/" + this.state.playerName,
 		{
-			method: 'GET' // The type of HTTP request.
+			method: 'GET'
 		}).then(res => {
-			// Convert the response data to a JSON.
 			return res.json();
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		}).then(playerList => {
 			if (!playerList) return;
+			//some players will not have olympic info, here we exit
+			if (playerList.length == 0) return;
+			//player can participate in multiple olympics and events, many rows possible
 			let olympicInfoDiv = playerList.map((playerObj, i) =>
 			<OlypmicsRow games={playerObj.Games} event={playerObj.Event} medal={playerObj.Medal}/>
 			);
 			this.setState({
 				olympicInfo: olympicInfoDiv
 			}, () => {
-				document.getElementById('playerinfo-container').style.display = 'inline';
+				//reveal olympic container on page
+				document.getElementById('olympic-container').style.display = 'inline';
 			});
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		});
 	}
 
-	/* ---- Q2 (Recommendations) ---- */
-	// Hint: Name of movie submitted is contained in `this.state.movieName`.
 	submitPlayer() {
 		fetch("http://localhost:8081/players/" + this.state.playerName,
 		{
-			method: 'GET' // The type of HTTP request.
+			method: 'GET'
 		}).then(res => {
-			// Convert the response data to a JSON.
 			return res.json();
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		}).then(playerList => {
 			if (!playerList) return;
-			// Map each movieObj in movieList to an HTML element:
+			//if a name is entered incorrectly or player doesn't exist, we will not reveal other parts of the page or do more calls
+			if (playerList.length == 0) {
+				document.getElementById('playersFound').textContent = 'No players found.'
+				return;
+			} else {
+				document.getElementById('playersFound').textContent = 'Players with name match ...'
+			}
+			//there are potentially more than one players that match with name. investigatePlayer is passed to get more info for the selected player
 			let playerDivs = playerList.map((playerObj, i) =>
 			<PlayersRow atp_id={playerObj.player_id} name={playerObj.name} hand={playerObj.hand} country={playerObj.country} birthday={playerObj.birthday} investigatePlayer={this.investigatePlayer} />
 			);
-			// Set the state of the movies list to the value returned by the HTTP response from the server.
 			this.setState({
 				recPlayers: playerDivs
+			}, () => {
+				document.getElementById('playerHeaders').style.display = 'flex';
+				document.getElementById('playerResults').style.display = 'inline';
 			});
 		}, err => {
-			// Print the error if there is one.
 			console.log(err);
 		});
 	}
@@ -166,8 +171,8 @@ export default class Players extends React.Component {
 						</div>
 						<div className="search-container">
 							<div className="header-container">
-							<div className="h6">Players with name match ...</div>
-							<div className="headers">
+							<div className="h6" id="playersFound"></div>
+							<div className="headers" id="playerHeaders">
 								<div className="header"><strong>ATP Id</strong></div>
 								<div className="header"><strong>Name</strong></div>
 								<div className="header"><strong>Hand</strong></div>
@@ -175,7 +180,7 @@ export default class Players extends React.Component {
 								<div className="header"><strong>Birthday</strong></div>
 							</div>
 							</div>
-							<div className="results-container" id="results">
+							<div className="results-container" id="playerResults">
 								{this.state.recPlayers}
 							</div>
 						</div>
@@ -186,7 +191,7 @@ export default class Players extends React.Component {
 								<div className="header"><strong>Grand Slam Tournament Wins</strong></div>
 							</div>
 							</div>
-							<div className="results-container" id="results">
+							<div className="results-container">
 								{this.state.gsWins}
 							</div>
 							<div className="header-container">
@@ -196,9 +201,11 @@ export default class Players extends React.Component {
 								<div className="header"><strong>Grand Slam Match Losses</strong></div>
 							</div>
 							</div>
-							<div className="results-container" id="results">
+							<div className="results-container">
 								{this.state.gsInfo}
 							</div>
+						</div>
+						<div id="olympic-container">
 							<div className="header-container">
 							<div className="h6"></div>
 								<div className="headers">
@@ -207,7 +214,7 @@ export default class Players extends React.Component {
 								<div className="header"><strong>Medal Result</strong></div>
 							</div>
 							</div>
-							<div className="results-container" id="results">
+							<div className="results-container">
 								{this.state.olympicInfo}
 							</div>
 						</div>

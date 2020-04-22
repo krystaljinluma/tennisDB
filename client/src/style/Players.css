@@ -23,7 +23,7 @@
   padding: 0px;
 }
 
-#playerinfo-container {
+#playerinfo-container, #playerHeaders, #playerResults, #olympic-container {
   display: none;
 }
 
