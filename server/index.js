@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -45,6 +45,9 @@ app.get('/gswins/:id', routes.getGSWins);
 
 /* ---- (GSInfo) ---- */
 app.get('/gsinfo/:id', routes.getGSInfo);
+
+/* ---- (GSInfo) ---- */
+app.get('/olympicinfo/:name', routes.getOlympicInfo);
 
 
 /* ---- (Best Genre) ---- */

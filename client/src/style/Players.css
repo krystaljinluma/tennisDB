@@ -4,7 +4,7 @@
   /* margin-top: 10px; */
 }
 
-.header-container .headers, .results-container .playerResults, .results-container .gsInfo {
+.header-container .headers, .results-container .playerResults, .results-container .gsInfo, .results-container .olympicInfo {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -29,4 +29,8 @@
 
 .gsInfo .wins, .gsInfo .losses {
   flex: 1 0 50%
+}
+
+.olympicInfo .games, .olympicInfo .event, .olympicInfo .medal {
+  flex: 1 0 33%
 }

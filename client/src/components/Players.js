@@ -3,6 +3,7 @@ import PageNavbar from './PageNavbar';
 import PlayersRow from './PlayersRow';
 import GrandSlamWinRow from './GrandSlamWinRow';
 import GrandSlamRow from './GrandSlamRow';
+import OlypmicsRow from './OlympicsRow';
 import '../style/Players.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -15,14 +16,15 @@ export default class Players extends React.Component {
 			playerId: "",
 			recPlayers: [],
 			gsInfo: [],
-			gsWins: []
+			gsWins: [],
+			olympicInfo: []
 		}
 
 		this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
 		this.submitPlayer = this.submitPlayer.bind(this);
 		this.investigatePlayer = this.investigatePlayer.bind(this);
-		this.gsWins = this.gsWins.bind(this);
-		this.gsInfo = this.gsInfo.bind(this);
+		this.getGSWins = this.getGSWins.bind(this);
+		this.getGSInfo = this.getGSInfo.bind(this);
 	}
 
 	handlePlayerNameChange(e) {
@@ -37,11 +39,11 @@ export default class Players extends React.Component {
 			playerId: e.target.parentElement.parentElement.firstChild.textContent
 		},() => {
 			//call larger function here
-			this.gsWins()
+			this.getGSWins() 
 		});
 	}
 
-	gsWins() {
+	getGSWins() {
 		fetch("http://localhost:8081/gswins/" + this.state.playerId,
 		{
 			method: 'GET' // The type of HTTP request.
@@ -60,7 +62,7 @@ export default class Players extends React.Component {
 				gsWins: gsWinsDiv
 			}, () => {
 				//call next function to get W-L
-				this.gsInfo()
+				this.getGSInfo()
 			});
 		}, err => {
 			// Print the error if there is one.
@@ -68,7 +70,7 @@ export default class Players extends React.Component {
 		});
 	}
 
-	gsInfo() {
+	getGSInfo() {
 		fetch("http://localhost:8081/gsinfo/" + this.state.playerId,
 		{
 			method: 'GET' // The type of HTTP request.
@@ -85,6 +87,32 @@ export default class Players extends React.Component {
 			);
 			this.setState({
 				gsInfo: gsInfoDiv
+			}, () => {
+				this.getOlympicInfo();
+			});
+		}, err => {
+			// Print the error if there is one.
+			console.log(err);
+		});
+	}
+
+	getOlympicInfo() {
+		fetch("http://localhost:8081/olympicinfo/" + this.state.playerName,
+		{
+			method: 'GET' // The type of HTTP request.
+		}).then(res => {
+			// Convert the response data to a JSON.
+			return res.json();
+		}, err => {
+			// Print the error if there is one.
+			console.log(err);
+		}).then(playerList => {
+			if (!playerList) return;
+			let olympicInfoDiv = playerList.map((playerObj, i) =>
+			<OlypmicsRow games={playerObj.Games} event={playerObj.Event} medal={playerObj.Medal}/>
+			);
+			this.setState({
+				olympicInfo: olympicInfoDiv
 			}, () => {
 				document.getElementById('playerinfo-container').style.display = 'inline';
 			});
@@ -170,6 +198,17 @@ export default class Players extends React.Component {
 							</div>
 							<div className="results-container" id="results">
 								{this.state.gsInfo}
+							</div>
+							<div className="header-container">
+							<div className="h6"></div>
+								<div className="headers">
+								<div className="header"><strong>Olympic Games</strong></div>
+								<div className="header"><strong>Event</strong></div>
+								<div className="header"><strong>Medal Result</strong></div>
+							</div>
+							</div>
+							<div className="results-container" id="results">
+								{this.state.olympicInfo}
 							</div>
 						</div>
 					</div>

@@ -92,18 +92,42 @@ function getGSWins(req, res) {
 function getGSInfo(req, res) {
   var id = req.params.id;
   var data = []
-  data.push({ wins: '459', losses: '93'})
+  data.push({ wins: '257', losses: '39'})
   res.json(data);
 
   // var query = `
   //   WITH player_matches AS (
   //     SELECT *
   //     FROM Stats
-  //     WHERE player_id = '${submittedId}'
+  //     WHERE player_id = '${id}'
   //   )
   //   SELECT COUNT('TRUE') AS wins, COUNT('FALSE') AS losses
   //   FROM player_matches
   //   GROUP BY winner;
+  // `;
+  // connection.query(query, function(err, rows, fields) {
+  //   if (err) console.log(err);
+  //   else {
+  //     res.json(rows);
+  //   }
+  // });
+};
+
+/* ---- (GS Wins - Losses) ---- */
+function getOlympicInfo(req, res) {
+  var name = req.params.name;
+  var data = []
+  data.push({ Games: '2004 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
+  data.push({ Games: '2008 Summer', Event: "Tennis Men's Singles", Medal: "Gold"})
+  data.push({ Games: '2008 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
+  data.push({ Games: '2016 Summer', Event: "Tennis Men's Singles", Medal: "NA"})
+  data.push({ Games: '2016 Summer', Event: "Tennis Men's Doubles", Medal: "Gold"})
+  res.json(data);
+
+  // var query = `
+  //   SELECT Games, Event, Medal
+  //   FROM Olympics
+  //   WHERE name = '${name}';
   // `;
   // connection.query(query, function(err, rows, fields) {
   //   if (err) console.log(err);
@@ -160,6 +184,7 @@ module.exports = {
   getPlayers: getPlayers,
   getGSWins: getGSWins,
   getGSInfo: getGSInfo,
+  getOlympicInfo: getOlympicInfo,
 	getAllGenres: getAllGenres,
 	getTopInGenre: getTopInGenre,
 	getDecades: getDecades,
