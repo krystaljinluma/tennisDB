@@ -114,7 +114,7 @@ export default class Players extends React.Component {
 			if (playerList.length == 0) return;
 			//player can participate in multiple olympics and events, many rows possible
 			let olympicInfoDiv = playerList.map((playerObj, i) =>
-			<OlypmicsRow games={playerObj.game} event={playerObj.event} medal={playerObj.medal}/>
+			<OlypmicsRow games={playerObj.games} event={playerObj.event_name} medal={playerObj.medal}/>
 			);
 			this.setState({
 				olympicInfo: olympicInfoDiv

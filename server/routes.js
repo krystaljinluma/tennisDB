@@ -127,7 +127,7 @@ function getOlympicInfo(req, res) {
   // res.json(data);
 
   var query = `
-    SELECT game, event, medal
+    SELECT games, event_name, medal
     FROM Olympic
     WHERE player_name = '${name}';
   `;
