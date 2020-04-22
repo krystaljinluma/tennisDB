@@ -137,6 +137,88 @@ function getOlympicInfo(req, res) {
   // });
 };
 
+function getMatchStats(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+  var round = req.params.round;
+  var data = []
+  res.json(data);
+
+// SELECT P.Name, S.Rank, S.Avg_odds, S.Aces, S.Winner
+// FROM Match M
+// JOIN Stats S ON S.Match_id = M.Match_id
+// JOIN Player P ON P.Player_id = S.Player_id
+// WHERE Tournament = ‘${tournamentName}$’
+// AND Year = ‘${tournamentYear}$’
+// AND Round = ‘${Round}$
+
+}
+
+function getPlayerStats(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+  var player = req.params.player;
+  var data = []
+  res.json(data);
+
+  // WITH tournament AS {
+  //   SELECT *
+  //   FROM Match M
+  //   JOIN Stats S ON M.match_id = S.match_id
+  //   WHERE Tournament = ‘${tournamentName}’
+  //   AND Year = ‘${Year}’
+  //   }, player_matches AS {
+  //   SELECT M.match_id, P.Name, P.Rank, T.Round
+  //   FROM tournament T
+  //   JOIN Stats S on S.match_id = M.match_id
+  //   JOIN Player P on P.player_id = S.player_id
+  //   WHERE P.Name = ‘${playerName}’
+  //   }
+    
+  //   SELECT PM.Name, PM.Rank, PM.Round, S.Winner
+  //   FROM player_matches PM 
+  //   JOIN Stats S ON PM.match_id = S.match_id
+  //   WHERE PM.Name != ‘${playerName}’
+
+}
+
+function getTopTen(req, res) {
+
+//   SELECT P.Name, P.Rank, S.total_pts, M.tournament, M.year,
+// FROM Match M
+// JOIN Stats S ON M.match_id = S.match_id
+// JOIN Player P ON P.player_id = S.player_id
+// WHERE S.player_id IN (SELECT P.player_id
+// 				FROM Player P
+// 				JOIN Stats S ON P.player_id = S.player_id
+// 				WHERE S.Rank <= 10)
+
+}
+
+function summarizeStats(req, res) {
+
+//   WITH won AS (SELECT P.Name, Sum(S.pts) AS pts, SUM(S.Aces) AS Aces, COUNT(*) AS wins
+// 			FROM Stats S
+// 			JOIN Player P ON P.player_id = S.player_id
+// 			JOIN Match M ON M.match_id = S.match_id
+// 			WHERE S.Winner = TRUE
+// 			AND M.tournament =  ‘${tournamentName}’
+// 			AND M.Year = ‘${Year}’
+// 	lost AS (SELECT P.Name, Sum(S.pts) AS pts, SUM(S.Aces) AS Aces, COUNT(*) AS losses
+// 			FROM Stats S
+// 			JOIN Player P ON P.player_id = S.player_id
+// 			JOIN Match M ON M.match_id = S.match_id
+// 			WHERE S.Winner = FALSE
+// AND M.tournament =  ‘${tournamentName}’
+// 			AND M.Year = ‘${Year}’
+// 			GROUP BY P.Name
+
+// SELECT P.Name, ((L.pts + S.pts) / (losses + wins)) AS average_points, ((L.Aces + S.Aces) / (losses + wins)) AS average_aces, W.wins, L.losses
+// FROM Wins W
+// JOIN lost L ON L.Name = W.Name
+
+}
+
 /* ---- (Best Genres) ---- */
 function getDecades(req, res) {
 	var query = `
@@ -188,5 +270,9 @@ module.exports = {
 	getAllGenres: getAllGenres,
 	getTopInGenre: getTopInGenre,
 	getDecades: getDecades,
-  bestGenresPerDecade: bestGenresPerDecade
+  bestGenresPerDecade: bestGenresPerDecade,
+  getMatchStats: getMatchStats,
+  getPlayerStats: getPlayerStats,
+  getTopTen: getTopTen,
+  summarizeStats: summarizeStats
 }
