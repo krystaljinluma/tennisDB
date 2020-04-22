@@ -3,3 +3,9 @@ build
 npm-debug.log
 .env
 .DS_Store
+client/node_modules
+client/debug.*
+client/test.*
+server/node_modules
+.vs*
+.csv*
