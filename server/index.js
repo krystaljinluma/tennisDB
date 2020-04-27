@@ -44,12 +44,18 @@ app.get('/olympicinfo/:name', routes.getOlympicInfo);
 
 /* ---- (Matches) ---- */
 
-/* ---- (Specific Round stats) ---- */
-app.get('/matchstats/:tournament/:year/:round/', routes.getMatchStats)
+app.get('/rounds/:tournament/:year', routes.getRounds)
+
+/* ---- (Specific Tournament stats) ---- */
+app.get('/tournament/:tournament/:year', routes.getMatchStats)
+
+
+app.get('/tournament/:tournament/:year/:round', routes.getRoundStats)
+
 
 
 /* ---- (Specific Player stats) ---- */
-app.get('/playerstats/:tournament/:year/:player/', routes.getPlayerStats)
+app.get('/playerstats/:tournament/:year/:player', routes.getPlayerStats)
 
 /* ---- (Top10 Player Matches) ---- */
 app.get('/topten', routes.getTopTen)
@@ -65,10 +71,6 @@ app.get('/decades', routes.getDecades);
 
 /* ---- Q3b (Best Genre) ---- */
 app.get('/decades/:decade', routes.bestGenresPerDecade);
-
-
-
-
 
 
 

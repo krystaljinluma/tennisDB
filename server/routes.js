@@ -9,39 +9,6 @@ var connection = mysql.createPool(config);
 /* -------------------------------------------------- */
 
 
-/* ---- Q1a (Dashboard) ---- */
-function getAllGenres(req, res) {
-  var query = `
-    SELECT DISTINCT genre
-    FROM Genres
-  `;
-  connection.query(query, function(err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
-};
-
-
-/* ---- Q1b (Dashboard) ---- */
-function getTopInGenre(req, res) {
-  var query = `
-    SELECT title, rating, vote_count
-    FROM Movies
-    JOIN Genres ON id = movie_id
-    WHERE genre = '${req.params.genre}'
-    ORDER BY rating DESC, vote_count DESC
-    LIMIT 10
-  `;
-  connection.query(query, function(err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
-};
-
 /* ---- (Players) ---- */
 function getPlayers(req, res) {
   var name = req.params.player;
@@ -134,6 +101,7 @@ function getOlympicInfo(req, res) {
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
     else {
+      console.log("query success")
       res.json(rows);
     }
   });
@@ -142,18 +110,71 @@ function getOlympicInfo(req, res) {
 function getMatchStats(req, res) {
   var tournament = req.params.tournament;
   var year = req.params.year;
-  var round = req.params.round;
-  var data = []
-  res.json(data);
 
-// SELECT P.Name, S.Rank, S.Avg_odds, S.Aces, S.Winner
-// FROM Match M
-// JOIN Stats S ON S.Match_id = M.Match_id
-// JOIN Player P ON P.Player_id = S.Player_id
-// WHERE Tournament = ‘${tournamentName}$’
-// AND Year = ‘${tournamentYear}$’
-// AND Round = ‘${Round}$
+  var query = 
+  `SELECT P.Name, S.p_rank, S.Aces, CASE S.Winner
+  WHEN 'T'
+  THEN 'WIN'
+  WHEN 'F'
+  THEN 'LOSE' END AS Result, M.round
+  FROM Stats S
+  JOIN Matches M ON S.match_id = M.match_id
+  JOIN Player P ON P.Player_id = S.Player_id
+  WHERE Tournament = "${tournament}"
+  AND match_year = ${year}
+  ORDER BY M.round DESC`
 
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
+
+function getRounds(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+
+  var query = 
+  `SELECT DISTINCT Round
+  FROM Matches
+  WHERE Tournament = "${tournament}"
+  AND match_year = ${year}
+  ORDER BY Round DESC
+  `
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
+
+function getRoundStats(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+  var round = req.params.round
+
+  var query = 
+  `SELECT P.Name, S.p_rank, S.Aces, CASE S.Winner
+  WHEN 'T'
+  THEN 'WIN'
+  WHEN 'F'
+  THEN 'LOSE' END AS Result, M.round
+  FROM Stats S
+  JOIN Matches M ON S.match_id = M.match_id
+  JOIN Player P ON P.Player_id = S.Player_id
+  WHERE Tournament = "${tournament}"
+  AND match_year = ${year}
+  AND M.round = "${round}"`
+
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 }
 
 function getPlayerStats(req, res) {
@@ -263,18 +284,53 @@ function bestGenresPerDecade(req, res) {
   });
 };
 
+/* ---- Q1a (Dashboard) ---- */
+function getAllGenres(req, res) {
+  var query = `
+    SELECT DISTINCT genre
+    FROM Genres
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
+
+/* ---- Q1b (Dashboard) ---- */
+function getTopInGenre(req, res) {
+  var query = `
+    SELECT title, rating, vote_count
+    FROM Movies
+    JOIN Genres ON id = movie_id
+    WHERE genre = '${req.params.genre}'
+    ORDER BY rating DESC, vote_count DESC
+    LIMIT 10
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   getPlayers: getPlayers,
   getGSWins: getGSWins,
   getGSInfo: getGSInfo,
   getOlympicInfo: getOlympicInfo,
-	getAllGenres: getAllGenres,
-	getTopInGenre: getTopInGenre,
-	getDecades: getDecades,
+  getDecades: getDecades,
+  getAllGenres: getAllGenres,
+  getTopInGenre: getTopInGenre,
   bestGenresPerDecade: bestGenresPerDecade,
   getMatchStats: getMatchStats,
   getPlayerStats: getPlayerStats,
   getTopTen: getTopTen,
-  summarizeStats: summarizeStats
+  summarizeStats: summarizeStats,
+  getRounds: getRounds,
+  getRoundStats: getRoundStats
 }

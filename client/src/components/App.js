@@ -6,7 +6,9 @@ import {
 } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import Players from './Players';
+import Matches from './Matches';
 import BestGenres from './BestGenres';
+
 
 export default class App extends React.Component {
 
@@ -38,7 +40,7 @@ export default class App extends React.Component {
 						<Route
 							path="/matches"
 							render={() => (
-								<BestGenres />
+								<Matches />
 							)}
 						/>
 						<Route
