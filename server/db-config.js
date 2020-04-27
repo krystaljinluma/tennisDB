@@ -4,5 +4,5 @@ module.exports = {
   user     : "admin",
   password : "cis550penn",
   port     : '3306',
-  database: 'TENNISDB',
+  database: 'TENNISDB'
 };
