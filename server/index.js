@@ -22,7 +22,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.get('/genres', routes.getAllGenres);
 
 
-
 /* ---- Q1b (Dashboard) ---- */
 app.get('/genres/:genre', routes.getTopInGenre); // Hint: Replace () => {} with the appropriate route handler.
 
@@ -49,7 +48,7 @@ app.get('/rounds/:tournament/:year', routes.getRounds)
 /* ---- (Specific Tournament stats) ---- */
 app.get('/tournament/:tournament/:year', routes.getMatchStats)
 
-
+app.get('/years/:tournament', routes.getYearsOfTournament)
 app.get('/tournament/:tournament/:year/:round', routes.getRoundStats)
 
 

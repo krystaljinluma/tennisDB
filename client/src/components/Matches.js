@@ -15,7 +15,8 @@ export default class Matches extends React.Component {
             year: "",
 			players: [],
 			rounds: [],
-			selectedRound: ""
+			selectedRound: "",
+			years: []
 		}
 	
 		this.handleTournamentChange = this.handleTournamentChange.bind(this);
@@ -33,6 +34,28 @@ export default class Matches extends React.Component {
         this.setState({
 			tournament: e.target.value
 		});
+
+		fetch("http://localhost:8081/years/" + e.target.value,
+		{
+		method: "GET"
+		}).then(res => {
+		return res.json();
+		}, err => {
+		  console.log(err);
+		}).then(years => {
+			let yearDivs = years.map((yearObj, i) =>
+		  		<option value={yearObj.Year}>{yearObj.Year}</option>     
+		  	);
+
+			this.setState({
+				years: yearDivs
+			});
+
+		}); 
+
+		
+
+
     }
 
     handleYearChange = e => {
@@ -52,6 +75,9 @@ export default class Matches extends React.Component {
 		}, err => {
 			console.log(err);
 		}).then(tournamentMatches => {
+			console.log(this.state.tournament);
+			console.log(this.state.year);
+
 			let playerDivs = tournamentMatches.map((player, i) => 
 			<MatchRow name={player.Name} rank={player.p_rank} aces={player.Aces} winner={player.Result} round={player.round} />
 			);
@@ -88,6 +114,10 @@ export default class Matches extends React.Component {
 		});
 	}
 
+	getYears() {
+		
+	}
+
 	handleChange = e => {
 		fetch("http://localhost:8081/tournament/" + this.state.tournament + "/" + this.state.year + "/" + e.target.value,
 		{
@@ -122,8 +152,19 @@ export default class Matches extends React.Component {
 			    		<div className="h5">Tournament Result</div>
 			    		<br></br>
 			    		<div className="input-container">
-			    			<input type='text' placeholder="Tournament Name" value={this.state.tournament} onChange={this.handleTournamentChange} id="movieName" className="movie-input"/>
-                            <input type='text' placeholder="Tournament Year" value={this.state.year} onChange={this.handleYearChange} id="tournamentName" className="tournament-input" />
+							<select value={this.state.tournament} onChange={this.handleTournamentChange} className="dropdown" id="tournamentDropdown">
+								<option select value> -- Select a Tournament -- </option>
+									<option value="Australian Open">Australian Open</option>     
+									<option value="Wimbledon">Wimbledon</option>     
+									<option value="French Open">French Open</option>     
+									<option value="US Open">Open Open</option>     
+								</select>
+
+							<select value={this.state.year} onChange={this.handleYearChange} className="dropdown" id="yearDropdown">
+								<option select value> -- Select a Year -- </option>
+								{this.state.years}
+							</select>
+							
                             <button id="submitMovieBtn" className="submit-btn" onClick={this.submit}>Submit</button>
 
 							<select value={this.state.selectedRound} onChange={this.handleChange} className="dropdown" id="roundDropdown">
@@ -134,11 +175,11 @@ export default class Matches extends React.Component {
 			    		</div>
 			    		<div className="header-container">
 			    			<div className="headers" id="tournamentHeaders">
-								<div className="header"><strong>Name</strong></div>
+								<div className="header"><strong>Round</strong></div>
+								<div className="header"><strong>Player Name</strong></div>
 								<div className="header"><strong>Rank</strong></div>
 								<div className="header"><strong>Aces</strong></div>
 								<div className="header"><strong>Result</strong></div>
-                                <div className="header"><strong>Round</strong></div>
 							</div>
 			    		</div>
 			    		<div className="results-container" id="results">

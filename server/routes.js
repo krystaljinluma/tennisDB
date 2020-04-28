@@ -9,6 +9,7 @@ var connection = mysql.createPool(config);
 /* -------------------------------------------------- */
 
 
+
 /* ---- (Players) ---- */
 function getPlayers(req, res) {
   var name = req.params.player;
@@ -121,7 +122,7 @@ function getMatchStats(req, res) {
   JOIN Matches M ON S.match_id = M.match_id
   JOIN Player P ON P.Player_id = S.Player_id
   WHERE Tournament = "${tournament}"
-  AND match_year = ${year}
+  AND YEAR(match_date) = ${year}
   ORDER BY M.round DESC`
 
   connection.query(query, function(err, rows, fields) {
@@ -132,6 +133,23 @@ function getMatchStats(req, res) {
   });
 }
 
+
+function getYearsOfTournament(req, res) {
+  var tournament = req.params.tournament;
+
+  var query =
+  `SELECT DISTINCT YEAR(match_date) AS Year
+  FROM Matches
+  WHERE tournament = "${tournament}"
+  ORDER BY YEAR(match_date) DESC`
+
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
 function getRounds(req, res) {
   var tournament = req.params.tournament;
   var year = req.params.year;
@@ -140,7 +158,7 @@ function getRounds(req, res) {
   `SELECT DISTINCT Round
   FROM Matches
   WHERE Tournament = "${tournament}"
-  AND match_year = ${year}
+  AND YEAR(match_date) = ${year}
   ORDER BY Round DESC
   `
   connection.query(query, function(err, rows, fields) {
@@ -166,7 +184,7 @@ function getRoundStats(req, res) {
   JOIN Matches M ON S.match_id = M.match_id
   JOIN Player P ON P.Player_id = S.Player_id
   WHERE Tournament = "${tournament}"
-  AND match_year = ${year}
+  AND YEAR(match_date) = ${year}
   AND M.round = "${round}"`
 
   connection.query(query, function(err, rows, fields) {
@@ -332,5 +350,6 @@ module.exports = {
   getTopTen: getTopTen,
   summarizeStats: summarizeStats,
   getRounds: getRounds,
-  getRoundStats: getRoundStats
+  getRoundStats: getRoundStats,
+  getYearsOfTournament: getYearsOfTournament
 }
