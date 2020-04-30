@@ -178,11 +178,11 @@ export default class BestGenre extends React.Component {
 
 		return (
 			<div className="BestGenres">
-				<PageNavbar active="Head2head" />
+				<PageNavbar active="head2head" />
 				<div className="container bestgenres-container">
 			      <div className="jumbotron">
 			        <div className="h5">Head-to-Head</div>
-					<PageNavbar2 active="bestgenres" />
+					<PageNavbar2 active="head2head" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
 					  {this.state.testMap}

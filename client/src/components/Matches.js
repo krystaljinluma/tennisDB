@@ -145,7 +145,7 @@ export default class Matches extends React.Component {
 
 		return (
 			<div className="Recommendations">
-				<PageNavbar active="recommendations" />
+				<PageNavbar active="matches" />
 
 			    <div className="container recommendations-container">
 			    	<div className="jumbotron">
