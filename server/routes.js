@@ -54,26 +54,17 @@ function getGSInfo(req, res) {
   var id = req.params.id;
 
   var query = `
-  SELECT COUNT(*) AS wins, losses
-  FROM (
-    SELECT *
+  WITH player_matches AS(
+    SELECT player_id, COUNT(*) AS wins
     FROM Stats
-    WHERE player_id = '${id}'
-  ) AS player_matches
-  JOIN (
-    (
-      SELECT COUNT(*) as losses
-      FROM (
-      SELECT *
-      FROM Stats
-      WHERE player_id = '${id}'
-    ) AS player_matches
-      GROUP BY winner
-    HAVING winner = 'F'
-      ) AS lose
-  )
-  GROUP BY winner
-  HAVING winner = 'T'
+    WHERE player_id = '${id}'  GROUP BY winner  HAVING winner = 'T'
+),
+player_matches2 AS(
+    SELECT player_id, COUNT(*) AS losses
+    FROM Stats
+    WHERE player_id = '${id}'  GROUP BY winner  HAVING winner = 'F'
+)
+SELECT wins, losses FROM player_matches p1 JOIN player_matches2 p2 ON p1.player_id = p2.player_id;
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
