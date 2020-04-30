@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Image } from 'react-bootstrap'
+import {Image} from 'react-bootstrap'
 
 export default class PageNavbar extends React.Component {
 	constructor(props) {

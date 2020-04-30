@@ -7,7 +7,9 @@ import {
 import Dashboard from './Dashboard';
 import Players from './Players';
 import Matches from './Matches';
-import BestGenres from './BestGenres';
+import Head2head from './Head2head';
+import BigThree from './BigThree';
+import Country from './Country';
 
 
 export default class App extends React.Component {
@@ -44,9 +46,21 @@ export default class App extends React.Component {
 							)}
 						/>
 						<Route
-							path="/head2head"
+							path="/Head2head"
 							render={() => (
-								<BestGenres />
+								<Head2head />
+							)}
+						/>
+						<Route
+							path="/bigThree"
+							render={() => (
+								<BigThree />
+							)}
+						/>
+						<Route
+							path="/Country"
+							render={() => (
+								<Country />
 							)}
 						/>
 					</Switch>
