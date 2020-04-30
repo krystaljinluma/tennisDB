@@ -63,6 +63,16 @@ app.get('/topten', routes.getTopTen)
 app.get('/summarizetournament/:tournament/:year', routes.summarizeStats)
 
 
+
+app.get('/players2/:p1/:p2', routes.h2hBetweenPlayers);
+
+app.get('/players2/:letter', routes.playersSerach);
+
+app.get('/spePlayer/:player', routes.playersSerachOpp);
+
+app.get('/match/:match_id', routes.getMatchDetails);
+
+
 /* ---- (Best Genre) ---- */
 app.get('/decades', routes.getDecades);
 

@@ -335,6 +335,78 @@ function getTopInGenre(req, res) {
   });
 };
 
+
+function playersSerachOpp(req, res) {
+  var specific_player = req.params.player;
+  var players = `
+  SELECT DISTINCT name FROM 
+(SELECT DISTINCT p.name, s.match_id FROM Player p 
+JOIN Stats s ON p.player_id = s.player_id)a 
+WHERE a.match_id IN 
+(SELECT DISTINCT match_id FROM Stats WHERE player_id IN 
+(SELECT player_id FROM Player WHERE name = '${specific_player}') ) 
+AND name <> '${specific_player}' ORDER BY name;
+`;
+connection.query(players, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+};
+
+function playersSerach(req, res) {;
+  var letter = req.params.letter;
+  var players = `
+  SELECT name FROM Player WHERE
+ birthday >= '1980-01-01' AND name LIKE '${letter}%' ORDER BY name;
+`;
+connection.query(players, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+};
+
+function getMatchDetails(req, res) {
+  var match_id = req.params.match_id;
+  var select_query = `
+  SELECT * FROM Stats WHERE match_id = '${match_id}' ORDER BY winner;
+`;
+connection.query(select_query, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+};
+
+function h2hBetweenPlayers(req, res) {
+  var specific_player1 = req.params.p1;
+  var specific_player2 = req.params.p2;
+  var select_query = `
+SELECT m.tournament,m.round, m.match_date, p3.name, s3.match_id FROM Stats s3 JOIN Player p3 ON p3.player_id = s3.player_id 
+JOIN Matches m ON m.match_id = s3.match_id
+WHERE s3.match_id IN (
+SELECT DISTINCT s.match_id FROM Player p 
+JOIN Stats s ON p.player_id = s.player_id
+WHERE p.name = "${specific_player1}") AND s3.match_id IN (SELECT DISTINCT s2.match_id FROM Player p2 
+JOIN Stats s2 ON p2.player_id = s2.player_id
+WHERE p2.name = "${specific_player2}") AND s3.winner = "T" ORDER BY match_date;
+`;
+connection.query(select_query, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+};
+
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   getPlayers: getPlayers,
@@ -351,5 +423,9 @@ module.exports = {
   summarizeStats: summarizeStats,
   getRounds: getRounds,
   getRoundStats: getRoundStats,
-  getYearsOfTournament: getYearsOfTournament
+  getYearsOfTournament: getYearsOfTournament,
+  playersSerachOpp: playersSerachOpp,
+  playersSerach: playersSerach,
+  getMatchDetails: getMatchDetails,
+  h2hBetweenPlayers: h2hBetweenPlayers
 }
