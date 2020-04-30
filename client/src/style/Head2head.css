@@ -1,0 +1,71 @@
+.movies-container {
+  display: flex;
+  flex-flow: column wrap;
+  margin-top: 10px;
+}
+
+.movies-container .movie, .movies-container .movieResults, .h2hinfo {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 40px;
+  padding: 0 0px;
+}
+
+.movie .header, .movieResults .title, .movieResults, .h2hinfo {
+  flex: 1 0 28%;
+  margin: auto
+}
+
+.movieResults {
+  cursor: pointer;
+}
+
+.details {
+  background-color:wheat;
+}
+
+table {
+  border: 5px;
+  border-style: double;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 70%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.submit-btn {
+  display: inline-block;
+  padding: 7px 8px;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color:rgb(34, 71, 139);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px #999;
+}
+
+.submit-btn:hover {background-color: rgb(34, 71, 139)}
+
+.submit-btn:active {
+  background-color:rgb(34, 71, 139);
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.test{
+  display: flex;
+}
