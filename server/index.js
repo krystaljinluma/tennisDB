@@ -76,6 +76,8 @@ app.get('/country/:player', routes.getCountryList);
 
 app.get('/countries/:player/:country',routes.getCountryAgainestPlayer)
 
+app.get('/bigThree/:player',routes.geth2hBigThree)
+
 /* ---- (Best Genre) ---- */
 app.get('/decades', routes.getDecades);
 

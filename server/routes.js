@@ -434,7 +434,34 @@ JOIN differentMatch d ON s.match_id=d.match_id
 JOIN country_matches c ON s.match_id=c.match_id
 JOIN Player p ON s.player_id = p.player_id 
 JOIN Matches m ON s.match_id = m.match_id
-ORDER BY s.match_id DESC;
+ORDER BY s.match_id DESC, s.winner DESC;
+`;
+connection.query(select_query, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+};
+
+function geth2hBigThree(req, res) {
+  var specific_player = req.params.player;
+  var select_query = `
+  WITH differentMatch AS(SELECT DISTINCT match_id FROM Stats 
+    WHERE player_id IN (SELECT player_id FROM Player 
+    WHERE name = '${specific_player}')),
+country_matches AS( SELECT DISTINCT match_id FROM(
+    SELECT DISTINCT s.match_id, p.name FROM Stats s JOIN Player p 
+ON p.player_id = s.player_id WHERE p.name = 'Roger Federer' 
+OR p.name = 'Rafael Nadal' OR p.name = 'Novak Djokovic')temp
+WHERE name<>'${specific_player}')
+SELECT p.name,s.winner,s.match_id,m.match_date,m.tournament,m.round FROM Stats s 
+JOIN differentMatch d ON s.match_id=d.match_id
+JOIN country_matches c ON s.match_id=c.match_id
+JOIN Player p ON s.player_id = p.player_id 
+JOIN Matches m ON s.match_id = m.match_id
+ORDER BY s.match_id DESC, s.winner DESC;
 `;
 connection.query(select_query, function(err, rows, fields) {
   if (err) console.log(err);
@@ -468,5 +495,6 @@ module.exports = {
   getMatchDetails: getMatchDetails,
   h2hBetweenPlayers: h2hBetweenPlayers,
   getCountryList:getCountryList,
-  getCountryAgainestPlayer:getCountryAgainestPlayer
+  getCountryAgainestPlayer:getCountryAgainestPlayer,
+  geth2hBigThree:geth2hBigThree
 }
