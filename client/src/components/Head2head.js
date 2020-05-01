@@ -5,7 +5,7 @@ import Head2headRow from './Head2headRow';
 import '../style/Head2head.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default class BestGenre extends React.Component {
+export default class Head2head extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -119,7 +119,7 @@ export default class BestGenre extends React.Component {
 			  <div className="header"><strong>date</strong></div>
 				<div className="header"><strong>tournament</strong></div>
 				<div className="header"><strong>round</strong></div>
-				<div className="header"><strong>name</strong></div>
+				<div className="header"><strong>winner</strong></div>
 			  </div>
 			  <div className="movies-container" id="results">
 				{genrelist}

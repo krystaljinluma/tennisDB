@@ -5,7 +5,7 @@ import Head2headRow from './Head2headRow';
 import '../style/Head2head.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default class BestGenre extends React.Component {
+export default class Country extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -202,7 +202,6 @@ export default class BestGenre extends React.Component {
 					<PageNavbar2 active="head2head" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
-					  {this.state.testMap}
 					  <select value={this.state.selectLetter} onChange={this.handleChange} className="dropdown" id="decadesDropdown">
 						<option key={-1} value={"null_value"}>
 		  				</option>
