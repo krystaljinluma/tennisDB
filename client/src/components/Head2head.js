@@ -112,8 +112,21 @@ export default class BestGenre extends React.Component {
 			name = {eachGenre.name} date = {eachGenre.match_date.substring(0,10)} round = {eachGenre.round} 
 			match_id = {eachGenre.match_id}/>
 			);
+			var tempList = [];
+			tempList.push(
+			<div className="movies-container">
+			  <div className="movie">
+			  <div className="header"><strong>date</strong></div>
+				<div className="header"><strong>tournament</strong></div>
+				<div className="header"><strong>round</strong></div>
+				<div className="header"><strong>name</strong></div>
+			  </div>
+			  <div className="movies-container" id="results">
+				{genrelist}
+			  </div>
+			</div>);
 			this.setState({
-				genres: genrelist
+				genres: tempList
 			  });
 
 		}, err => {
@@ -206,19 +219,7 @@ export default class BestGenre extends React.Component {
 						<button className="submit-btn" id="genreSubmitBtn" onClick={this.submitGenre}>Submit</button>
 					  </div>
 			        </div>
-			      </div>
-			      <div className="jumbotron">
-			        <div className="movies-container">
-			          <div className="movie">
-					  <div className="header"><strong>date</strong></div>
-			            <div className="header"><strong>tournament</strong></div>
-						<div className="header"><strong>round</strong></div>
-			            <div className="header"><strong>name</strong></div>
-			          </div>
-			          <div className="movies-container" id="results">
-			            {this.state.genres}
-			          </div>
-			        </div>
+					{this.state.genres}
 			      </div>
 			    </div>
 			</div>
