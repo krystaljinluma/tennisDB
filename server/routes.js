@@ -398,6 +398,54 @@ connection.query(select_query, function(err, rows, fields) {
 
 };
 
+function getCountryList(req, res) {
+  var specific_player = req.params.player;
+  var countries = `
+  WITH differentMatch AS(SELECT DISTINCT match_id FROM Stats 
+    WHERE player_id IN (SELECT player_id FROM Player 
+    WHERE name = '${specific_player}'))
+    SELECT DISTINCT country FROM Player p JOIN Stats s
+    ON p.player_id=s.player_id 
+    JOIN differentMatch d ON d.match_id = s.match_id WHERE name<>'${specific_player}' ORDER BY country;
+`;
+connection.query(countries, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+
+};
+
+function getCountryAgainestPlayer(req, res) {
+  var specific_player = req.params.player;
+  var specific_country = req.params.country;
+  var select_query = `
+  WITH differentMatch AS(SELECT DISTINCT match_id FROM Stats 
+    WHERE player_id IN (SELECT player_id FROM Player 
+    WHERE name = '${specific_player}')),
+country_matches AS(
+    SELECT DISTINCT s.match_id FROM Stats s JOIN Player p 
+ON p.player_id = s.player_id WHERE p.country = '${specific_country}' 
+AND p.name<>'${specific_player}')
+SELECT p.name,s.winner,s.match_id,m.match_date,m.tournament,m.round FROM Stats s 
+JOIN differentMatch d ON s.match_id=d.match_id
+JOIN country_matches c ON s.match_id=c.match_id
+JOIN Player p ON s.player_id = p.player_id 
+JOIN Matches m ON s.match_id = m.match_id
+ORDER BY s.match_id DESC;
+`;
+connection.query(select_query, function(err, rows, fields) {
+  if (err) console.log(err);
+  else {
+    res.json(rows);
+  }
+});
+
+};
+
+
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   getPlayers: getPlayers,
@@ -418,5 +466,7 @@ module.exports = {
   playersSerachOpp: playersSerachOpp,
   playersSerach: playersSerach,
   getMatchDetails: getMatchDetails,
-  h2hBetweenPlayers: h2hBetweenPlayers
+  h2hBetweenPlayers: h2hBetweenPlayers,
+  getCountryList:getCountryList,
+  getCountryAgainestPlayer:getCountryAgainestPlayer
 }

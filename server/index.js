@@ -72,6 +72,9 @@ app.get('/spePlayer/:player', routes.playersSerachOpp);
 
 app.get('/match/:match_id', routes.getMatchDetails);
 
+app.get('/country/:player', routes.getCountryList);
+
+app.get('/countries/:player/:country',routes.getCountryAgainestPlayer)
 
 /* ---- (Best Genre) ---- */
 app.get('/decades', routes.getDecades);
