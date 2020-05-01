@@ -12,9 +12,13 @@ export default class BestGenre extends React.Component {
 		this.state = {
 			selectedDecade: "",
 			selectGenre: "",
+			selectLetter:"",
 			decades: [],
 			genres: [],
-			genereSelectList: []
+			genereSelectList: [],
+			letterList : ["A","B","C","D","E","F","G","H","I",
+			"J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
+			optionLetterList : []
 		};
 
 		this.submitDecade = this.submitDecade.bind(this);
@@ -25,7 +29,26 @@ export default class BestGenre extends React.Component {
 
 	/* ---- Q3a (Best Genres) ---- */
 	componentDidMount() {
-		fetch("http://localhost:8081/decades",
+		let listOfLetter = [];
+		for(var j = 0;j<26;j++){
+			listOfLetter.push(
+			<option key={j} value={this.state.letterList[j]}>
+				{this.state.letterList[j]}
+			</option>);
+		}
+		this.setState({
+			optionLetterList: listOfLetter
+		  });
+		
+	
+	}
+
+	handleChange(e) {
+		this.setState({
+			selectLetter: e.target.value
+		});
+		var letter =  e.target.value;
+		fetch(`http://localhost:8081/players2/${letter}`,
 		{
 		  method: 'GET' // The type of HTTP request.
 		}).then(res => {
@@ -40,8 +63,8 @@ export default class BestGenre extends React.Component {
 		  // Map each genreObj in genreList to an HTML element:
 		  // A button which triggers the showMovies function for each genre.
 		  let decadeDivs = decadelist.map((eachdecade, i) =>
-		  <option key={i} value={eachdecade.decade}>
-			  {eachdecade.decade}
+		  <option key={i} value={eachdecade.name}>
+			  {eachdecade.name}
 		  </option>
 		   );
 		   console.log(decadeDivs);
@@ -55,11 +78,7 @@ export default class BestGenre extends React.Component {
 		  // Print the error if there is one.
 		  console.log(err);
 		});
-		
-	
-	}
 
-	handleChange(e) {
 	}
 
 	handleChange2(e) {
@@ -75,9 +94,12 @@ export default class BestGenre extends React.Component {
 	submitGenre(){
 		//console.log(this.state.selectedDecade);
 		//console.log(this.state.selectedGenre);
+		this.setState({
+			genres: []
+		  });
 		var selected = this.state.selectedDecade;
 		var selected2 = this.state.selectedGenre;
-		fetch(`http://localhost:8081/decades/${selected}/${selected2}`,
+		fetch(`http://localhost:8081/countries/${selected}/${selected2}`,
 		{
 		  method: 'GET' // The type of HTTP request.
 		}).then(res => {
@@ -89,8 +111,10 @@ export default class BestGenre extends React.Component {
 		}).then(bestGenre => {
 			console.log(bestGenre);
 			let genrelist = bestGenre.map((eachGenre,i)=>
-			<Head2headRow genre={eachGenre.genre} 
-			avg_rating = {eachGenre.avg_rating} />
+			
+			<Head2headRow tournament={eachGenre.tournament} 
+			name = {eachGenre.name+"("+eachGenre.winner+")"} date = {eachGenre.match_date.substring(0,10)} round = {eachGenre.round} 
+			match_id = {eachGenre.match_id}/>
 			);
 			this.setState({
 				genres: genrelist
@@ -112,7 +136,7 @@ export default class BestGenre extends React.Component {
 		});
 		var selected =  e.target.value;
 		console.log('current state is '+selected);
-		fetch(`http://localhost:8081/decades/${selected}`,
+		fetch(`http://localhost:8081/country/${selected}`,
 		{
 		  method: 'GET' // The type of HTTP request.
 		}).then(res => {
@@ -128,22 +152,21 @@ export default class BestGenre extends React.Component {
 		  // });
 		  //console.log(top10movie);
 		  console.log(bestGenre);
-		  let genrelist = bestGenre.map((eachGenre,i)=>
-		  <Head2headRow genre={eachGenre.genre} 
-		  avg_rating = {eachGenre.avg_rating} />
-		  );
+		//   let genrelist = bestGenre.map((eachGenre,i)=>
+		//   <BestGenreRow genre={eachGenre.genre} 
+		//   avg_rating = {eachGenre.avg_rating} />
+		//   );
 
 		  let newOptionList = bestGenre.map((eachGenre, j) =>
-		  <option key={j} value={eachGenre.genre}>
-			  {eachGenre.genre}
+		  <option key={j} value={eachGenre.country}>
+			  {eachGenre.country}
 		  </option>
 		   );
-		   newOptionList.push(<option key='unique' value='Big Three'>Big Three</option>);
 	
-		  console.log(genrelist);
-		   this.setState({
-			genres: genrelist
-		  });
+		//   console.log(genrelist);
+		//    this.setState({
+		// 	genres: genrelist
+		//   });
 		  this.setState({
 			genereSelectList: newOptionList
 		  });
@@ -159,21 +182,28 @@ export default class BestGenre extends React.Component {
 
 		return (
 			<div className="BestGenres">
-				<PageNavbar active="Head2head" />
+				<PageNavbar active="head2head" />
 				<div className="container bestgenres-container">
 			      <div className="jumbotron">
-			        <div className="h5">Best Genres: This is Country</div>
-					<PageNavbar2 active="Country" />
+			        <div className="h5">Player-Country Head-to-Head</div>
+					<PageNavbar2 active="head2head" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
+					  {this.state.testMap}
+					  <select value={this.state.selectLetter} onChange={this.handleChange} className="dropdown" id="decadesDropdown">
+						<option key={-1} value={"null_value"}>
+		  				</option>
+							{this.state.optionLetterList}
+			            </select>
 			            <select value={this.state.selectedDecade} onChange={this.submitDecade} className="dropdown" id="decadesDropdown">
 						<option key={-1} value={"null_value"}>
+						Please select a player!
 		  				</option>
 							{this.state.decades}
 			            </select>
 						<select value={this.state.selectedGenre} onChange={this.handleChange2} className="dropdown" id="decadesDropdown2">
 						<option key={-1} value={"null_value"}>
-							Please Select Another Player!
+							Please select a country!
 		  				</option>
 						  {this.state.genereSelectList}
 			            </select>
@@ -184,8 +214,10 @@ export default class BestGenre extends React.Component {
 			      <div className="jumbotron">
 			        <div className="movies-container">
 			          <div className="movie">
-			            <div className="header"><strong>Genre</strong></div>
-			            <div className="header"><strong>Average Rating</strong></div>
+					  <div className="header"><strong>date</strong></div>
+			            <div className="header"><strong>tournament</strong></div>
+						<div className="header"><strong>round</strong></div>
+			            <div className="header"><strong>name(win or not)</strong></div>
 			          </div>
 			          <div className="movies-container" id="results">
 			            {this.state.genres}
