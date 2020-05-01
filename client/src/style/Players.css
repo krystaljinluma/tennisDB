@@ -4,7 +4,7 @@
   /* margin-top: 10px; */
 }
 
-.header-container .headers, .results-container .playerResults, .results-container .gsInfo, .results-container .olympicInfo {
+.header-container .headers, .results-container .playerResults, .results-container .gsInfo, .results-container .olympicInfo, .results-container .gsWins {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -27,7 +27,7 @@
   display: none;
 }
 
-.gsInfo .wins, .gsInfo .losses {
+.gsInfo .wins, .gsInfo .losses, .gsWins .rank, .gsWins .wins {
   flex: 1 0 50%
 }
 

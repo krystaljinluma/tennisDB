@@ -32,7 +32,7 @@ app.get('/players/:player', routes.getPlayers);
 
 
 /* ---- (GSWins) ---- */
-app.get('/gswins/:id', routes.getGSWins);
+app.get('/gswins/:id', routes.getGSWinsAndRank);
 
 /* ---- (GSInfo) ---- */
 app.get('/gsinfo/:id', routes.getGSInfo);

@@ -7,6 +7,7 @@ export default class PlayersRow extends React.Component {
 
 		/* props looks like:
 		{
+			p_rank
 			wins
 		}
 		*/
@@ -15,6 +16,7 @@ export default class PlayersRow extends React.Component {
 	render() {
 		return (
 			<div className="gsWins">
+				<div className="rank">{this.props.rank}</div>
 				<div className="wins">{this.props.wins}</div>
 			</div>
 		);

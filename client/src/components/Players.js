@@ -23,7 +23,7 @@ export default class Players extends React.Component {
 		this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
 		this.submitPlayer = this.submitPlayer.bind(this);
 		this.investigatePlayer = this.investigatePlayer.bind(this);
-		this.getGSWins = this.getGSWins.bind(this);
+		this.getGSWinsAndRank = this.getGSWinsAndRank.bind(this);
 		this.getGSInfo = this.getGSInfo.bind(this);
 	}
 
@@ -42,13 +42,11 @@ export default class Players extends React.Component {
 			playerId: e.target.parentElement.parentElement.firstChild.textContent
 		},() => {
 			//call function to get GS tournament wins
-			console.log(this.state.playerId)
-			console.log(this.state.playerName)
-			this.getGSWins() 
+			this.getGSWinsAndRank() 
 		});
 	}
 
-	getGSWins() {
+	getGSWinsAndRank() {
 		fetch("http://localhost:8081/gswins/" + this.state.playerId,
 		{
 			method: 'GET'
@@ -60,7 +58,7 @@ export default class Players extends React.Component {
 			if (!playerList) return;
 			//will only be one row produced here
 			let gsWinsDiv = playerList.map((playerObj, i) =>
-			<GrandSlamWinRow wins={playerObj.gs_wins} />
+			<GrandSlamWinRow wins={playerObj.gs_wins} rank={playerObj.p_rank} />
 			);
 			this.setState({
 				gsWins: gsWinsDiv
@@ -84,6 +82,10 @@ export default class Players extends React.Component {
 		}).then(playerList => {
 			if (!playerList) return;
 			//will only be one row produced here
+			if (playerList.length == 0) {
+				document.getElementById('dataFound').textContent = 'No data found for this player. Data is only for GS singles matches played from 2000 - 2019.';
+				return;
+			}
 			let gsInfoDiv = playerList.map((playerObj, i) =>
 			<GrandSlamRow wins={playerObj.wins} losses={playerObj.losses}/>
 			);
@@ -132,6 +134,7 @@ export default class Players extends React.Component {
 		document.getElementById('playerResults').style.display = 'none';
 		document.getElementById('playerinfo-container').style.display = 'none';
 		document.getElementById('olympic-container').style.display = 'none';
+		document.getElementById('dataFound').textContent = '';
 		fetch("http://localhost:8081/players/" + this.state.playerName,
 		{
 			method: 'GET'
@@ -150,7 +153,7 @@ export default class Players extends React.Component {
 			}
 			//there are potentially more than one players that match with name. investigatePlayer is passed to get more info for the selected player
 			let playerDivs = playerList.map((playerObj, i) =>
-			<PlayersRow atp_id={playerObj.player_id} name={playerObj.name} hand={playerObj.hand} country={playerObj.country} birthday={playerObj.birthday} investigatePlayer={this.investigatePlayer} />
+			<PlayersRow atp_id={playerObj.player_id} name={playerObj.name} hand={playerObj.hand} country={playerObj.country} birthday={playerObj.birthday.substring(0,10)} investigatePlayer={this.investigatePlayer} />
 			);
 			this.setState({
 				recPlayers: playerDivs
@@ -191,11 +194,13 @@ export default class Players extends React.Component {
 							<div className="results-container" id="playerResults">
 								{this.state.recPlayers}
 							</div>
+							<div className="h6" id="dataFound"></div>
 						</div>
 						<div id="playerinfo-container">
 							<div className="header-container">
 							<div className="h6"></div>
 								<div className="headers">
+								<div className="header"><strong>Highest Career Ranking</strong></div>
 								<div className="header"><strong>Grand Slam Tournament Wins</strong></div>
 							</div>
 							</div>

@@ -28,18 +28,24 @@ function getPlayers(req, res) {
 };
 
 /* ---- (GS Tournament Wins) ---- */
-function getGSWins(req, res) {
+function getGSWinsAndRank(req, res) {
   var id = req.params.id;
 
   var query = `
-    SELECT COUNT(*) AS gs_wins
-    FROM (
-      SELECT *
-      FROM Stats
-      WHERE player_id = '${id}'
-    ) AS player_matches
+  WITH player_matches AS(
+    SELECT *
+	  FROM Stats
+	  WHERE player_id = '${id}'
+  ),
+  player_matches2 AS(
+	  SELECT _latin1 '${id}' AS player_id, COUNT(*) AS gs_wins
+    FROM player_matches
     JOIN Matches USING(match_id)
     WHERE round = 'The Final' AND winner = 'T'
+  )
+  SELECT gs_wins, p_rank
+  FROM player_matches p1 
+  JOIN player_matches2 p2 ON p1.player_id = p2.player_id;;
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
@@ -57,15 +63,20 @@ function getGSInfo(req, res) {
   WITH player_matches AS(
     SELECT player_id, COUNT(*) AS wins
     FROM Stats
-    WHERE player_id = '${id}'  GROUP BY winner  HAVING winner = 'T'
-),
-player_matches2 AS(
+    WHERE player_id = '${id}'  
+    GROUP BY winner  
+    HAVING winner = 'T'
+  ),
+  player_matches2 AS(
     SELECT player_id, COUNT(*) AS losses
     FROM Stats
-    WHERE player_id = '${id}'  GROUP BY winner  HAVING winner = 'F'
-)
-SELECT wins, losses FROM player_matches p1 JOIN player_matches2 p2 ON p1.player_id = p2.player_id;
-  `;
+    WHERE player_id = '${id}'  
+    GROUP BY winner  
+    HAVING winner = 'F'
+  )
+  SELECT wins, losses
+  FROM player_matches p1 
+  JOIN player_matches2 p2 ON p1.player_id = p2.player_id;`;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -77,18 +88,11 @@ SELECT wins, losses FROM player_matches p1 JOIN player_matches2 p2 ON p1.player_
 /* ---- (GS Wins - Losses) ---- */
 function getOlympicInfo(req, res) {
   var name = req.params.name;
-  // var data = []
-  // data.push({ Games: '2004 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
-  // data.push({ Games: '2008 Summer', Event: "Tennis Men's Singles", Medal: "Gold"})
-  // data.push({ Games: '2008 Summer', Event: "Tennis Men's Doubles", Medal: "NA"})
-  // data.push({ Games: '2016 Summer', Event: "Tennis Men's Singles", Medal: "NA"})
-  // data.push({ Games: '2016 Summer', Event: "Tennis Men's Doubles", Medal: "Gold"})
-  // res.json(data);
 
   var query = `
     SELECT games, event_name, medal
     FROM Olympic
-    WHERE player_name = '${name}';
+    WHERE player_name = '${name}' AND event_name LIKE 'Tennis M%';
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
@@ -476,7 +480,7 @@ connection.query(select_query, function(err, rows, fields) {
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   getPlayers: getPlayers,
-  getGSWins: getGSWins,
+  getGSWinsAndRank: getGSWinsAndRank,
   getGSInfo: getGSInfo,
   getOlympicInfo: getOlympicInfo,
   getDecades: getDecades,
