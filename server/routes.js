@@ -43,9 +43,9 @@ function getGSWinsAndRank(req, res) {
     JOIN Matches USING(match_id)
     WHERE round = 'The Final' AND winner = 'T'
   )
-  SELECT gs_wins, p_rank
+  SELECT gs_wins, MIN(p_rank) AS p_rank
   FROM player_matches p1 
-  JOIN player_matches2 p2 ON p1.player_id = p2.player_id;;
+  JOIN player_matches2 p2 ON p1.player_id = p2.player_id;
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
@@ -93,6 +93,36 @@ function getOlympicInfo(req, res) {
     SELECT games, event_name, medal
     FROM Olympic
     WHERE player_name = '${name}' AND event_name LIKE 'Tennis M%';
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      console.log("query success")
+      res.json(rows);
+    }
+  });
+};
+
+/* ---- (Tournament Breakdown) ---- */
+function getTournamentBreakdown(req, res) {
+  var id = req.params.id;
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+
+  var query = `
+  WITH player_matches AS(
+    SELECT *
+    FROM Stats
+    WHERE player_id = '${id}'
+  )
+  Select round, name AS opponent, player_matches.set1 AS set1, Stats.set1 AS opp_set1, player_matches.set2 AS set2, Stats.set2 AS opp_set2, player_matches.set3 AS set3, 
+    Stats.set3 AS opp_set3, player_matches.set4 AS set4, Stats.set4 AS opp_set4, player_matches.set5, Stats.set5 AS opp_set5
+  FROM Matches
+  JOIN player_matches ON player_matches.match_id = Matches.match_id
+  JOIN Stats ON Matches.match_id = Stats.match_id
+  JOIN Player ON Player.player_id = Stats.player_id
+  WHERE tournament = '${tournament}' and Stats.player_id != '${id}' and YEAR(match_date) = '${year}'
+  order by round
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
@@ -500,5 +530,6 @@ module.exports = {
   h2hBetweenPlayers: h2hBetweenPlayers,
   getCountryList:getCountryList,
   getCountryAgainestPlayer:getCountryAgainestPlayer,
-  geth2hBigThree:geth2hBigThree
+  geth2hBigThree:geth2hBigThree,
+  getTournamentBreakdown: getTournamentBreakdown
 }

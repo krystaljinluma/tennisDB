@@ -40,6 +40,9 @@ app.get('/gsinfo/:id', routes.getGSInfo);
 /* ---- (GSInfo) ---- */
 app.get('/olympicinfo/:name', routes.getOlympicInfo);
 
+/* ---- (Tournament Breakdown) ---- */
+app.get('/tbd/:id/:tournament/:year', routes.getTournamentBreakdown);
+
 
 /* ---- (Matches) ---- */
 

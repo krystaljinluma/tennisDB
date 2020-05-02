@@ -4,8 +4,14 @@ import PlayersRow from './PlayersRow';
 import GrandSlamWinRow from './GrandSlamWinRow';
 import GrandSlamRow from './GrandSlamRow';
 import OlypmicsRow from './OlympicsRow';
+import TournamentBreakdownRow from './TournamentBreakdownRow'
 import '../style/Players.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
 
 export default class Players extends React.Component {
 	constructor(props) {
@@ -17,7 +23,11 @@ export default class Players extends React.Component {
 			recPlayers: [],
 			gsInfo: [],
 			gsWins: [],
-			olympicInfo: []
+			olympicInfo: [],
+			tournamentResults: [],
+			showModal: false,
+			year: "Year",
+			tournament: "Tournament", 
 		}
 
 		this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
@@ -25,6 +35,11 @@ export default class Players extends React.Component {
 		this.investigatePlayer = this.investigatePlayer.bind(this);
 		this.getGSWinsAndRank = this.getGSWinsAndRank.bind(this);
 		this.getGSInfo = this.getGSInfo.bind(this);
+		this.handleClose = this.handleClose.bind(this);
+		this.handleShow = this.handleShow.bind(this);
+		this.changeTournament = this.changeTournament.bind(this);
+		this.changeYear = this.changeYear.bind(this);
+		this.tournamentBreakdown = this.tournamentBreakdown.bind(this);
 	}
 
 	handlePlayerNameChange(e) {
@@ -33,9 +48,67 @@ export default class Players extends React.Component {
 		});
 	}
 
+	handleShow(e) {
+		this.setState({
+			showModal: true
+		});
+	}
+
+	handleClose(e) {
+		this.setState({
+			showModal: false
+		});
+	}
+
+	changeTournament = e => {
+		this.setState({
+			tournament: e.target.textContent
+		});
+	}
+
+	changeYear = e => {
+		this.setState({
+			year: e.target.textContent
+		});
+	}
+
+	tournamentBreakdown(e) {
+		fetch("http://localhost:8081/tbd/" + this.state.playerId + "/" + this.state.tournament + "/" + this.state.year,
+		{
+			method: 'GET'
+		}).then(res => {
+			return res.json();
+		}, err => {
+			console.log(err);
+		}).then(playerList => {
+			if (!playerList) return;
+			if (playerList.length == 0) {
+				document.getElementById('tournDataFound').textContent = 'Player did not participate in tournament.';
+				document.getElementById('tournament-container').style.display = 'none';
+				return;
+			}
+			document.getElementById('tournDataFound').textContent = '';
+			//can be many rows
+			let tournamentDivs = playerList.map((playerObj, i) =>
+			<TournamentBreakdownRow round={playerObj.round} opponent={playerObj.opponent} set1={playerObj.set1} opp_set1={playerObj.opp_set1} 
+			set2={playerObj.set2} opp_set2={playerObj.opp_set2} set3={playerObj.set3} opp_set3={playerObj.opp_set3} set4={playerObj.set4} opp_set4={playerObj.opp_set4}
+			set5={playerObj.set5} opp_set5={playerObj.opp_set5}/>
+			);
+			this.setState({
+				tournamentResults: tournamentDivs
+			}, () => {
+				//call next function to get W-L
+				document.getElementById('tournament-container').style.display = 'inline';
+			});
+		}, err => {
+			console.log(err);
+		});
+	}
+
 	investigatePlayer(e) {
 		document.getElementById('playerinfo-container').style.display = 'none';
 		document.getElementById('olympic-container').style.display = 'none';
+		document.getElementById('tournament-breakdown').style.display = 'none';
 		//make sure states are set for subsequent function calls
 		this.setState({
 			playerName: e.target.firstChild.nodeValue,
@@ -94,6 +167,7 @@ export default class Players extends React.Component {
 			}, () => {
 				//reveal player GS stats containers on page
 				document.getElementById('playerinfo-container').style.display = 'inline';
+				document.getElementById('tournament-breakdown').style.display = 'inline';
 				//get olympic info for player
 				this.getOlympicInfo();
 			});
@@ -135,6 +209,7 @@ export default class Players extends React.Component {
 		document.getElementById('playerinfo-container').style.display = 'none';
 		document.getElementById('olympic-container').style.display = 'none';
 		document.getElementById('dataFound').textContent = '';
+		document.getElementById('tournament-breakdown').style.display = 'none';
 		fetch("http://localhost:8081/players/" + this.state.playerName,
 		{
 			method: 'GET'
@@ -217,6 +292,69 @@ export default class Players extends React.Component {
 							<div className="results-container">
 								{this.state.gsInfo}
 							</div>
+						</div>
+						<div id="tournament-breakdown">
+						<Button variant="link" id="tournButton" onClick={this.handleShow}>
+							Tournament Breakdown
+						</Button>
+
+						<Modal show={this.state.showModal} onHide={this.handleClose} size="lg">
+							<Modal.Header closeButton>
+							<Modal.Title>Tournament Breakdown</Modal.Title>
+							</Modal.Header>
+							<Modal.Body>
+							<DropdownButton as={ButtonGroup} variant="secondary" title={this.state.tournament}>
+								<Dropdown.Item onClick={this.changeTournament}>Australian Open</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeTournament}>French Open</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeTournament}>Wimbledon</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeTournament}>US Open</Dropdown.Item>
+							</DropdownButton>{' '}
+							<DropdownButton as={ButtonGroup} variant="secondary" title={this.state.year}>
+								<Dropdown.Item onClick={this.changeYear}>2000</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2001</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2002</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2003</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2004</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2005</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2006</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2007</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2008</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2009</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2010</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2011</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2012</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2013</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2014</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2015</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2016</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2017</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2018</Dropdown.Item>
+								<Dropdown.Item onClick={this.changeYear}>2019</Dropdown.Item>
+							</DropdownButton>
+							<div className="h6" id="tournDataFound"></div>
+							<div id="tournament-container">
+							<div className="header-container">
+							<div className="h6"></div>
+								<div className="headers">
+								<div className="header"><strong>Round</strong></div>
+								<div className="header"><strong>Opponent</strong></div>
+								<div className="header"><strong>Result</strong></div>
+							</div>
+							</div>
+							<div className="results-container">
+								{this.state.tournamentResults}
+							</div>
+							</div>
+							</Modal.Body>
+							<Modal.Footer>
+							<Button variant="secondary" onClick={this.handleClose}>
+								Close
+							</Button>
+							<Button variant="dark" onClick={this.tournamentBreakdown}>
+								Get Results
+							</Button>
+							</Modal.Footer>
+						</Modal>
 						</div>
 						<div id="olympic-container">
 							<div className="header-container">

@@ -4,7 +4,7 @@
   /* margin-top: 10px; */
 }
 
-.header-container .headers, .results-container .playerResults, .results-container .gsInfo, .results-container .olympicInfo, .results-container .gsWins {
+.header-container .headers, .results-container .playerResults, .results-container .gsInfo, .results-container .olympicInfo, .results-container .gsWins, .results-container .tournamentBreakdown {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -19,11 +19,11 @@
   margin-top: 10px;
 }
 
-.playerName {
+.playerName, #tournButton {
   padding: 0px;
 }
 
-#playerinfo-container, #playerHeaders, #playerResults, #olympic-container {
+#playerinfo-container, #playerHeaders, #playerResults, #olympic-container, #tournament-container, #tournament-breakdown {
   display: none;
 }
 
@@ -31,6 +31,14 @@
   flex: 1 0 50%
 }
 
-.olympicInfo .games, .olympicInfo .event, .olympicInfo .medal {
+.olympicInfo .games, .olympicInfo .event, .olympicInfo .medal, .tournamentBreakdown .round, .tournamentBreakdown .opponent, .tournamentBreakdown .result {
   flex: 1 0 33%
+}
+
+#tournButton {
+  margin-top: 10px;
+}
+
+#tournDataFound {
+  margin-top: 15px;
 }
