@@ -92,6 +92,9 @@ export default class Head2head extends React.Component {
 
 
 	submitGenre(){
+		this.setState({
+			genres: []
+		  });
 		//console.log(this.state.selectedDecade);
 		//console.log(this.state.selectedGenre);
 		var selected = this.state.selectedDecade;
