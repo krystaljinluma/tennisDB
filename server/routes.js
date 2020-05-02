@@ -224,30 +224,50 @@ function getPlayerStats(req, res) {
   var tournament = req.params.tournament;
   var year = req.params.year;
   var player = req.params.player;
-  var data = []
-  res.json(data);
-
-  // WITH tournament AS {
-  //   SELECT *
-  //   FROM Match M
-  //   JOIN Stats S ON M.match_id = S.match_id
-  //   WHERE Tournament = ‘${tournamentName}’
-  //   AND Year = ‘${Year}’
-  //   }, player_matches AS {
-  //   SELECT M.match_id, P.Name, P.Rank, T.Round
-  //   FROM tournament T
-  //   JOIN Stats S on S.match_id = M.match_id
-  //   JOIN Player P on P.player_id = S.player_id
-  //   WHERE P.Name = ‘${playerName}’
-  //   }
-    
-  //   SELECT PM.Name, PM.Rank, PM.Round, S.Winner
-  //   FROM player_matches PM 
-  //   JOIN Stats S ON PM.match_id = S.match_id
-  //   WHERE PM.Name != ‘${playerName}’
-
+  var query = `SELECT P.Name, T.round, T.avg_minutes_game, T.avg_seconds_point, T.avg_minutes_set, S.winner
+  FROM (SELECT M.match_id, M.round, M.avg_minutes_game, M.avg_seconds_point, M.avg_minutes_set
+        FROM Matches M
+        JOIN Stats S ON M.match_id = S.match_id
+        JOIN Player P ON P.player_id = S.player_id
+        WHERE M.tournament = "${tournament}"
+        AND YEAR(M.match_date) = ${year}
+        AND P.Name = "${player}") T
+  JOIN Stats S ON T.match_id = S.match_id
+  JOIN Player P ON P.player_id = S.player_id
+  WHERE P.Name != "${player}"
+  ORDER BY T.round DESC
+  `
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 }
 
+function getEliminatedBy(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+  var player = req.params.player;
+  var query = `SELECT P.Name
+  FROM (SELECT M.match_id
+        FROM Matches M
+        JOIN Stats S ON M.match_id = S.match_id
+        JOIN Player P ON P.player_id = S.player_id
+        WHERE M.tournament = "${tournament}"
+        AND YEAR(M.match_date) = ${year}
+        AND P.Name = "${player}") T
+  JOIN Stats S ON T.match_id = S.match_id
+  JOIN Player P ON P.player_id = S.player_id
+  WHERE P.Name != "${player}"
+  AND S.Winner = 'T'`
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
 function getTopTen(req, res) {
 
 //   SELECT P.Name, P.Rank, S.total_pts, M.tournament, M.year,
@@ -262,27 +282,24 @@ function getTopTen(req, res) {
 }
 
 function summarizeStats(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+  var player = req.params.player;
+  var query = `SELECT P.Name, round(avg(S.total_pts)) AS pts, round(avg(S.Aces)) AS Aces, COUNT(case S.Winner when 'T' then 1 else null end) AS wins, COUNT(case S.Winner when 'F' then 1 else null end) AS losses
+  FROM Stats S
+  JOIN Player P ON P.player_id = S.player_id
+  JOIN Matches M ON M.match_id = S.match_id
+  WHERE M.tournament =  "${tournament}"
+  AND YEAR(match_date) = ${year}
+  AND P.Name = "${player}"
+  GROUP BY P.Name`
 
-//   WITH won AS (SELECT P.Name, Sum(S.pts) AS pts, SUM(S.Aces) AS Aces, COUNT(*) AS wins
-// 			FROM Stats S
-// 			JOIN Player P ON P.player_id = S.player_id
-// 			JOIN Match M ON M.match_id = S.match_id
-// 			WHERE S.Winner = TRUE
-// 			AND M.tournament =  ‘${tournamentName}’
-// 			AND M.Year = ‘${Year}’
-// 	lost AS (SELECT P.Name, Sum(S.pts) AS pts, SUM(S.Aces) AS Aces, COUNT(*) AS losses
-// 			FROM Stats S
-// 			JOIN Player P ON P.player_id = S.player_id
-// 			JOIN Match M ON M.match_id = S.match_id
-// 			WHERE S.Winner = FALSE
-// AND M.tournament =  ‘${tournamentName}’
-// 			AND M.Year = ‘${Year}’
-// 			GROUP BY P.Name
-
-// SELECT P.Name, ((L.pts + S.pts) / (losses + wins)) AS average_points, ((L.Aces + S.Aces) / (losses + wins)) AS average_aces, W.wins, L.losses
-// FROM Wins W
-// JOIN lost L ON L.Name = W.Name
-
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
 }
 
 /* ---- (Best Genres) ---- */
@@ -531,5 +548,6 @@ module.exports = {
   getCountryList:getCountryList,
   getCountryAgainestPlayer:getCountryAgainestPlayer,
   geth2hBigThree:geth2hBigThree,
-  getTournamentBreakdown: getTournamentBreakdown
+  getTournamentBreakdown: getTournamentBreakdown,
+  getEliminatedBy: getEliminatedBy
 }

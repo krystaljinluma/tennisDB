@@ -43,7 +43,6 @@ app.get('/olympicinfo/:name', routes.getOlympicInfo);
 /* ---- (Tournament Breakdown) ---- */
 app.get('/tbd/:id/:tournament/:year', routes.getTournamentBreakdown);
 
-
 /* ---- (Matches) ---- */
 
 app.get('/rounds/:tournament/:year', routes.getRounds)
@@ -52,12 +51,17 @@ app.get('/rounds/:tournament/:year', routes.getRounds)
 app.get('/tournament/:tournament/:year', routes.getMatchStats)
 
 app.get('/years/:tournament', routes.getYearsOfTournament)
-app.get('/tournament/:tournament/:year/:round', routes.getRoundStats)
 
+app.get('/tournament/:tournament/:year/:round', routes.getRoundStats)
 
 
 /* ---- (Specific Player stats) ---- */
 app.get('/playerstats/:tournament/:year/:player', routes.getPlayerStats)
+
+app.get('/summarizeStats/:tournament/:year/:player', routes.summarizeStats)
+
+app.get('/eliminatedBy/:tournament/:year/:player', routes.getEliminatedBy)
+
 
 /* ---- (Top10 Player Matches) ---- */
 app.get('/topten', routes.getTopTen)

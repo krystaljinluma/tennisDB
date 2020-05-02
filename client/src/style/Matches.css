@@ -4,7 +4,7 @@
   /* margin-top: 10px; */
 }
 
-.header-container .headers, .results-container .tournamentResults{
+.header-container .headers, .results-container .tournamentResults, .opponentInfo {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -23,6 +23,11 @@
   padding: 0px;
 }
 
-#playerinfo-container, #playerHeaders, #playerResults, #olympic-container {
+#playerinfo-container, #playerHeaders, #playerResults, #opponent-container {
   display: none;
+}
+
+
+.opponentInfo .name, .opponentInfo .round, .opponentInfo .game_minutes, .opponentInfo .point_seconds, .opponentInfo .set-minutes, .opponentInfo .winner {
+  flex: 1 16%
 }
