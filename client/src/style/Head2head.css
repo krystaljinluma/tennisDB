@@ -17,8 +17,9 @@
   margin: auto
 }
 
-.detailResults{
+.detailResults:hover{
   cursor: pointer;
+  border-style: inset;
 }
 
 .details {
