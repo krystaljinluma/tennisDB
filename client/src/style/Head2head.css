@@ -1,10 +1,10 @@
-.movies-container {
+.matches-container {
   display: flex;
   flex-flow: column wrap;
   margin-top: 10px;
 }
 
-.movies-container .movie, .movies-container .movieResults, .h2hinfo {
+.matches-container .matchTitle, .matches-container .detailResults, .h2hinfo {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -12,12 +12,12 @@
   padding: 0 0px;
 }
 
-.movie .header, .movieResults .title, .movieResults, .h2hinfo {
+.matchTitle .header, .detailResults, .h2hinfo {
   flex: 1 0 20%;
   margin: auto
 }
 
-.movieResults {
+.detailResults{
   cursor: pointer;
 }
 
@@ -70,8 +70,31 @@ tr:nth-child(even) {
   display: flex;
 }
 
+
+.Select_bar
+{
+    display:flex;
+    flex-direction:row;
+    
+}
+
+.Select_bar > div
+{
+
+    flex:1 1 auto;
+    
+    margin:5px;  /* and that, will result in a 10px gap */
+}
+
+.Select_bar > button
+{
+  height:10%;
+  margin: 12px;
+}
+
+
 input[type=text]{
-  width: 100%;
+  width: 93%;
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
