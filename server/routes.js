@@ -427,7 +427,7 @@ SELECT DISTINCT s.match_id FROM Player p
 JOIN Stats s ON p.player_id = s.player_id
 WHERE p.name = "${specific_player1}") AND s3.match_id IN (SELECT DISTINCT s2.match_id FROM Player p2 
 JOIN Stats s2 ON p2.player_id = s2.player_id
-WHERE p2.name = "${specific_player2}") AND s3.winner = "T" ORDER BY match_date;
+WHERE p2.name = "${specific_player2}") AND s3.winner = "T" ORDER BY match_date DESC;
 `;
 connection.query(select_query, function(err, rows, fields) {
   if (err) console.log(err);

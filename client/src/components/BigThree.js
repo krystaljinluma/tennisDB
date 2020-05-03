@@ -4,6 +4,9 @@ import Head2headRow from './Head2headRow';
 import PageNavbar2 from './PageNavbar2';
 import '../style/Head2head.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import { Dropdown, Button, Row, Col, Container} from 'react-bootstrap';
 
 export default class BigThree extends React.Component {
 	constructor(props) {
@@ -29,9 +32,7 @@ export default class BigThree extends React.Component {
 		let listOfLetter = [];
 		for(var j = 0;j<26;j++){
 			listOfLetter.push(
-			<option key={j} value={this.state.letterList[j]}>
-				{this.state.letterList[j]}
-			</option>);
+				<Dropdown.Item onClick={this.handleChange2}>{this.state.letterList[j]}</Dropdown.Item>);
 		}
 		this.setState({
 			optionLetterList: listOfLetter
@@ -42,15 +43,15 @@ export default class BigThree extends React.Component {
 
 	handleChange(e) {
 		this.setState({
-			selectedDecade: e.target.value
+			selectedDecade: e.target.textContent
 		});
 	}
 
 	handleChange2(e){
 		this.setState({
-			selectLetter: e.target.value
+			selectLetter: e.target.textContent
 		});
-		var letter =  e.target.value;
+		var letter =  e.target.textContent;
 		fetch(`http://localhost:8081/players2/${letter}`,
 		{
 		  method: 'GET' // The type of HTTP request.
@@ -66,9 +67,7 @@ export default class BigThree extends React.Component {
 		  // Map each genreObj in genreList to an HTML element:
 		  // A button which triggers the showMovies function for each genre.
 		  let decadeDivs = decadelist.map((eachdecade, i) =>
-		  <option key={i} value={eachdecade.name}>
-			  {eachdecade.name}
-		  </option>
+		  <Dropdown.Item onClick={this.handleChange}>{eachdecade.name}</Dropdown.Item>
 		   );
 		   console.log(decadeDivs);
 		  
@@ -104,12 +103,12 @@ export default class BigThree extends React.Component {
 		  console.log(err);
 		}).then(bestGenre => {
 			console.log(bestGenre);
-			let genrelist = bestGenre.map((eachGenre,i)=>
-			
-			<Head2headRow tournament={eachGenre.tournament} 
-			name = {eachGenre.name+"("+eachGenre.winner+")"} date = {eachGenre.match_date.substring(0,10)} round = {eachGenre.round} 
-			match_id = {eachGenre.match_id}/>
-			);
+			var genrelist = [];
+			for (var i = 0;i<bestGenre.length;i=i+2){
+				genrelist.push(<Head2headRow tournament={bestGenre[i].tournament} 
+					name = {bestGenre[i].name+"/"+bestGenre[i+1].name} date = {bestGenre[i].match_date.substring(0,10)} round = {bestGenre[i].round} 
+					match_id = {bestGenre[i].match_id}/>);
+			}
 			var templist = [];
 			templist.push(
 			<div className="movies-container">
@@ -147,17 +146,12 @@ export default class BigThree extends React.Component {
 					<PageNavbar2 active="bigThree" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
-					  <select value={this.state.selectLetter} onChange={this.handleChange2} className="dropdown" id="decadesDropdown">
-						<option key={-1} value={"null_value"}>
-		  				</option>
-							{this.state.optionLetterList}
-			            </select>
-			            <select value={this.state.selectedDecade} onChange={this.handleChange} className="dropdown" id="decadesDropdown">
-						<option key={-1} value={"null_value"}>
-							Please select a player name
-		  				</option>
-							{this.state.decades}
-			            </select>
+					  <DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Select A Letter!" variant="secondary" id="letterDropdown">
+								{this.state.optionLetterList}
+					</DropdownButton>
+					<DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Please select a player!" variant="secondary" id="play1Dropdown">
+								{this.state.decades}
+					</DropdownButton>
 			            <button className="submit-btn" id="decadesSubmitBtn" onClick={this.submitDecade}>Submit</button>
 			          </div>
 					  {this.state.genres}

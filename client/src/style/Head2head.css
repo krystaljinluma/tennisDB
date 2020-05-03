@@ -13,7 +13,7 @@
 }
 
 .movie .header, .movieResults .title, .movieResults, .h2hinfo {
-  flex: 1 0 28%;
+  flex: 1 0 20%;
   margin: auto
 }
 
