@@ -4,6 +4,9 @@ import PageNavbar2 from './PageNavbar2';
 import Head2headRow from './Head2headRow';
 import '../style/Head2head.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import { Dropdown, Button, Row, Col, Container} from 'react-bootstrap';
 
 export default class Country extends React.Component {
 	constructor(props) {
@@ -32,9 +35,7 @@ export default class Country extends React.Component {
 		let listOfLetter = [];
 		for(var j = 0;j<26;j++){
 			listOfLetter.push(
-			<option key={j} value={this.state.letterList[j]}>
-				{this.state.letterList[j]}
-			</option>);
+				<Dropdown.Item onClick={this.handleChange}>{this.state.letterList[j]}</Dropdown.Item>);
 		}
 		this.setState({
 			optionLetterList: listOfLetter
@@ -45,9 +46,9 @@ export default class Country extends React.Component {
 
 	handleChange(e) {
 		this.setState({
-			selectLetter: e.target.value
+			selectLetter: e.target.textContent
 		});
-		var letter =  e.target.value;
+		var letter =  e.target.textContent;
 		fetch(`http://localhost:8081/players2/${letter}`,
 		{
 		  method: 'GET' // The type of HTTP request.
@@ -63,9 +64,7 @@ export default class Country extends React.Component {
 		  // Map each genreObj in genreList to an HTML element:
 		  // A button which triggers the showMovies function for each genre.
 		  let decadeDivs = decadelist.map((eachdecade, i) =>
-		  <option key={i} value={eachdecade.name}>
-			  {eachdecade.name}
-		  </option>
+<Dropdown.Item onClick={this.submitDecade}>{eachdecade.name}</Dropdown.Item>
 		   );
 		   console.log(decadeDivs);
 		  
@@ -82,9 +81,9 @@ export default class Country extends React.Component {
 	}
 
 	handleChange2(e) {
-		console.log(e.target.value);
+		console.log(e.target.textContent);
 		this.setState({
-			selectedGenre: e.target.value
+			selectedGenre: e.target.textContent
 		});
 	}
 
@@ -110,12 +109,12 @@ export default class Country extends React.Component {
 		  console.log(err);
 		}).then(bestGenre => {
 			console.log(bestGenre);
-			let genrelist = bestGenre.map((eachGenre,i)=>
-			
-			<Head2headRow tournament={eachGenre.tournament} 
-			name = {eachGenre.name+"("+eachGenre.winner+")"} date = {eachGenre.match_date.substring(0,10)} round = {eachGenre.round} 
-			match_id = {eachGenre.match_id}/>
-			);
+			var genrelist = [];
+			for (var i = 0;i<bestGenre.length;i=i+2){
+				genrelist.push(<Head2headRow tournament={bestGenre[i].tournament} 
+					name = {bestGenre[i].name+"/"+bestGenre[i+1].name} date = {bestGenre[i].match_date.substring(0,10)} round = {bestGenre[i].round} 
+					match_id = {bestGenre[i].match_id}/>);
+			}
 			var templist = [];
 			templist.push(
 			<div className="movies-container">
@@ -123,7 +122,7 @@ export default class Country extends React.Component {
 			  <div className="header"><strong>date</strong></div>
 				<div className="header"><strong>tournament</strong></div>
 				<div className="header"><strong>round</strong></div>
-				<div className="header"><strong>name(win or not)</strong></div>
+				<div className="header"><strong>winner/loser</strong></div>
 			  </div>
 			  <div className="movies-container" id="results">
 				{genrelist}
@@ -143,11 +142,11 @@ export default class Country extends React.Component {
 
 	/* ---- Q3b (Best Genres) ---- */
 	submitDecade(e) {
-		console.log(e.target.value);
+		console.log(e.target.textContent);
 		this.setState({
-			selectedDecade: e.target.value
+			selectedDecade: e.target.textContent
 		});
-		var selected =  e.target.value;
+		var selected =  e.target.textContent;
 		console.log('current state is '+selected);
 		fetch(`http://localhost:8081/country/${selected}`,
 		{
@@ -171,9 +170,7 @@ export default class Country extends React.Component {
 		//   );
 
 		  let newOptionList = bestGenre.map((eachGenre, j) =>
-		  <option key={j} value={eachGenre.country}>
-			  {eachGenre.country}
-		  </option>
+		  <Dropdown.Item onClick={this.handleChange2}>{eachGenre.country}</Dropdown.Item>
 		   );
 	
 		//   console.log(genrelist);
@@ -202,23 +199,15 @@ export default class Country extends React.Component {
 					<PageNavbar2 active="head2head" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
-					  <select value={this.state.selectLetter} onChange={this.handleChange} className="dropdown" id="decadesDropdown">
-						<option key={-1} value={"null_value"}>
-		  				</option>
-							{this.state.optionLetterList}
-			            </select>
-			            <select value={this.state.selectedDecade} onChange={this.submitDecade} className="dropdown" id="decadesDropdown">
-						<option key={-1} value={"null_value"}>
-						Please select a player!
-		  				</option>
-							{this.state.decades}
-			            </select>
-						<select value={this.state.selectedGenre} onChange={this.handleChange2} className="dropdown" id="decadesDropdown2">
-						<option key={-1} value={"null_value"}>
-							Please select a country!
-		  				</option>
-						  {this.state.genereSelectList}
-			            </select>
+					  <DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Select A Letter!" variant="secondary" id="letterDropdown">
+								{this.state.optionLetterList}
+					</DropdownButton>
+					<DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Please select a player!" variant="secondary" id="play1Dropdown">
+								{this.state.decades}
+					</DropdownButton>
+					<DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Please select a country!" variant="secondary" id="play2Dropdown">
+								{this.state.genereSelectList}
+					</DropdownButton>
 						<button className="submit-btn" id="genreSubmitBtn" onClick={this.submitGenre}>Submit</button>
 					  </div>
 			        </div>
