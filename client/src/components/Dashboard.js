@@ -91,7 +91,7 @@ export default class Dashboard extends React.Component {
     return (
       <div className="Dashboard">
 
-        <PageNavbar active="dashboard" />
+        <PageNavbar active="Dashboard" />
 
         <br></br>
         <div className="container movies-container">
