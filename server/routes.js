@@ -220,11 +220,13 @@ function getRoundStats(req, res) {
   });
 }
 
+
+
 function getPlayerStats(req, res) {
   var tournament = req.params.tournament;
   var year = req.params.year;
   var player = req.params.player;
-  var query = `SELECT P.Name, T.round, T.avg_minutes_game, T.avg_seconds_point, T.avg_minutes_set, S.winner
+  var query = `SELECT P.Name, T.round, T.avg_minutes_game, T.avg_seconds_point, T.avg_minutes_set
   FROM (SELECT M.match_id, M.round, M.avg_minutes_game, M.avg_seconds_point, M.avg_minutes_set
         FROM Matches M
         JOIN Stats S ON M.match_id = S.match_id
@@ -291,16 +293,28 @@ function summarizeStats(req, res) {
   });
 }
 
-/* ---- (Best Genres) ---- */
-function getDecades(req, res) {
-	var query = `
-    SELECT DISTINCT (FLOOR(year/10)*10) AS decade
-    FROM (
-      SELECT DISTINCT release_year as year
-      FROM Movies
-      ORDER BY release_year
-    ) y
-  `;
+
+function getTournamentMatch(req, res) {
+  var tournament = req.params.tournament;
+  var year = req.params.year;
+  var round = req.params.round;
+  var player = req.params.player
+  var query = `SELECT P.Name, S.num_sets, S.dbl_faults, S.first_serve_rtn_won, M.match_minutes, S.bp_saved, S.bp_faced
+  FROM Stats S
+  JOIN Matches M ON M.match_id = S.match_id
+  JOIN Player P ON P.player_id = S.player_id
+  WHERE M.round = "${round}"
+  AND (M.avg_minutes_game, M.match_minutes) = (SELECT M.avg_minutes_game, M.match_minutes
+          FROM Stats S
+          JOIN Matches M ON M.match_id = S.match_id
+          JOIN Player P ON P.player_id = S.player_id
+          WHERE M.round = "${round}"
+          AND P.Name = "${player}"
+          AND M.tournament = "${tournament}"
+          AND YEAR(M.match_date) = ${year})
+  AND M.tournament = "${tournament}"
+  AND YEAR(M.match_date) = ${year}`
+
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -308,64 +322,6 @@ function getDecades(req, res) {
     }
   });
 }
-
-/* ---- Q3 (Best Genres) ---- */
-function bestGenresPerDecade(req, res) {
-  var decade = req.params.decade
-  var query = `
-  With decade_avg AS (
-    SELECT FLOOR(release_year/10)*10 "decade", genre, AVG(rating) "avg_rating"
-    FROM Movies
-    JOIN Genres ON id = movie_id
-    WHERE FLOOR(release_year/10)*10 = ${decade}
-    GROUP BY FLOOR(release_year/10)*10, genre
-    )
-    SELECT DISTINCT genre, IFNULL(avg_rating, 0) AS avg_rating
-    FROM Genres
-    LEFT JOIN decade_avg USING(genre)
-    ORDER BY avg_rating DESC, genre ASC;
-  `;
-  connection.query(query, function(err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
-};
-
-/* ---- Q1a (Dashboard) ---- */
-function getAllGenres(req, res) {
-  var query = `
-    SELECT DISTINCT genre
-    FROM Genres
-  `;
-  connection.query(query, function(err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
-};
-
-
-/* ---- Q1b (Dashboard) ---- */
-function getTopInGenre(req, res) {
-  var query = `
-    SELECT title, rating, vote_count
-    FROM Movies
-    JOIN Genres ON id = movie_id
-    WHERE genre = '${req.params.genre}'
-    ORDER BY rating DESC, vote_count DESC
-    LIMIT 10
-  `;
-  connection.query(query, function(err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
-};
-
 
 function playersSerachOpp(req, res) {
   var specific_player = req.params.player;
@@ -401,6 +357,7 @@ connection.query(players, function(err, rows, fields) {
 });
 
 };
+
 
 function getMatchDetails(req, res) {
   var match_id = req.params.match_id;
@@ -519,10 +476,6 @@ module.exports = {
   getGSWinsAndRank: getGSWinsAndRank,
   getGSInfo: getGSInfo,
   getOlympicInfo: getOlympicInfo,
-  getDecades: getDecades,
-  getAllGenres: getAllGenres,
-  getTopInGenre: getTopInGenre,
-  bestGenresPerDecade: bestGenresPerDecade,
   getMatchStats: getMatchStats,
   getPlayerStats: getPlayerStats,
   summarizeStats: summarizeStats,
@@ -537,5 +490,6 @@ module.exports = {
   getCountryAgainestPlayer:getCountryAgainestPlayer,
   geth2hBigThree:geth2hBigThree,
   getTournamentBreakdown: getTournamentBreakdown,
-  getEliminatedBy: getEliminatedBy
+  getEliminatedBy: getEliminatedBy,
+  getTournamentMatch: getTournamentMatch
 }

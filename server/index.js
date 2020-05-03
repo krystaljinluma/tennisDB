@@ -15,16 +15,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 
 
-
 /* ---- (Dashboard) ---- */
-// The route localhost:8081/genres is registered to the function
-// routes.getAllGenres, specified in routes.js.
-app.get('/genres', routes.getAllGenres);
-
-
-/* ---- Q1b (Dashboard) ---- */
-app.get('/genres/:genre', routes.getTopInGenre); // Hint: Replace () => {} with the appropriate route handler.
-
 
 
 /* ---- (Players) ---- */
@@ -68,7 +59,7 @@ app.get('/eliminatedBy/:tournament/:year/:player', routes.getEliminatedBy)
 /* ---- (Top10 Player Matches) ---- */
 app.get('/summarizetournament/:tournament/:year', routes.summarizeStats)
 
-
+app.get('/tournamentMatch/:tournament/:year/:round/:player', routes.getTournamentMatch)
 
 app.get('/players2/:p1/:p2', routes.h2hBetweenPlayers);
 
@@ -84,13 +75,7 @@ app.get('/countries/:player/:country',routes.getCountryAgainestPlayer)
 
 app.get('/bigThree/:player',routes.geth2hBigThree)
 
-/* ---- (Best Genre) ---- */
-app.get('/decades', routes.getDecades);
 
-
-
-/* ---- Q3b (Best Genre) ---- */
-app.get('/decades/:decade', routes.bestGenresPerDecade);
 
 
 

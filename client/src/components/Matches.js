@@ -1,6 +1,8 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
 import MatchRow from './MatchRow';
+import Modal from 'react-bootstrap/Modal'
+
 import StatRow from './StatRow';
 import OpponentRow from './OpponentRow';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
@@ -27,22 +29,68 @@ export default class Matches extends React.Component {
 			years: [],
 			selectedPlayer: "",
 			stats: [],
-			opponents: []
+			opponents: [],
+			showModal: false,
+			matchMinutes: 0,
+			matchDetails: []
 		}
 
 		this.getTournamentPlayer = this.getTournamentPlayer.bind(this);
-
+		this.handleShow = this.handleShow.bind(this);
+		this.handleClose = this.handleClose.bind(this);
 		this.handleTournamentChange = this.handleTournamentChange.bind(this);
 		this.handleYearChange = this.handleYearChange.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.submit = this.submit.bind(this);
 
     }
-	
+	handleShow(e) {
+		this.setState({
+			showModal: true,
+		});
+
+		fetch("http://localhost:8081/tournamentMatch/" + this.state.tournament + '/' + this.state.year + 
+										'/' + e.target.parentElement.parentElement.children[1].textContent + '/' + this.state.selectedPlayer,
+		{
+		method: "GET"
+		}).then(res => {
+		return res.json();
+		}, err => {
+		  console.log(err);
+		}).then(details => {
+			let detailDivs = details.map((detail, i) =>
+				<div className="tournamentResults">
+					<div className="name">{detail.Name}</div>
+					<div className="round">{detail.num_sets}</div>
+					<div className="round">{detail.first_serve_rtn_won}</div>
+					<div className="rank">{detail.dbl_faults}</div>
+					<div className="aces">{detail.bp_saved} - {detail.bp_faced}</div>
+				</div>
+			);
+
+			this.setState({
+				matchDetails: detailDivs
+			});
+
+			this.setState({
+				matchMinutes: details[0].match_minutes
+			});
+			
+		}); 
+
+	}
+
+	handleClose() {
+		this.setState({
+			showModal: false
+		});
+	}
+
 	getTournamentPlayer = e => {
 
+
 		document.getElementById('tournamentHeaders').style.display = 'none';
-		document.getElementById('summaryStats').style.display = 'flex';
+		// document.getElementById('summaryStats').style.display = 'flex';
 
 		document.getElementById('results').style.display = 'none';
 		document.getElementById('results1').style.display = 'inline';
@@ -55,11 +103,13 @@ export default class Matches extends React.Component {
 		}, err => {
 		  console.log(err);
 		}).then(player => {
-			console.log(player);
-
 			if (player[0]) {
 				this.setState({
-				eliminatedPlayer: player[0].Name
+					eliminatedPlayer: player[0].Name
+				});
+			} else {
+				this.setState({
+					eliminatedPlayer: "N/A"
 				});
 			}
 
@@ -80,16 +130,11 @@ export default class Matches extends React.Component {
 		  console.log(err);
 		}).then(opps => {
 			let oppDivs = opps.map((opp, i) =>
-			<OpponentRow name={opp.Name} round={opp.round} game_minutes={opp.avg_minutes_game} point_seconds={opp.avg_seconds_point} set_minutes={opp.avg_minutes_set} winner={opp.winner}/>
+			<OpponentRow showModal={this.handleShow} name={opp.Name} round={opp.round} game_minutes={opp.avg_minutes_game} point_seconds={opp.avg_seconds_point} set_minutes={opp.avg_minutes_set}/>
 			);
-
 			this.setState({
 				opponents: oppDivs
 			});
-
-			// document.getElementById('olympic-container').style.display = 'inline';
-
-			console.log(this.state.opponents);
 
 		}); 
 
@@ -204,10 +249,6 @@ export default class Matches extends React.Component {
 
 	}
 
-	getYears() {
-		
-	}
-
 	handleChange = e => {
 		fetch("http://localhost:8081/tournament/" + this.state.tournament + "/" + this.state.year + "/" + e.target.textContent,
 		{
@@ -228,6 +269,8 @@ export default class Matches extends React.Component {
 
 		}); 
 	  }
+
+
 
 	render() {
 
@@ -257,7 +300,6 @@ export default class Matches extends React.Component {
 								{this.state.rounds}
 							</DropdownButton>
 
-							
 			    		</div>
 			    		<div className="header-container">
 			    			<div className="headers" id="tournamentHeaders">
@@ -275,29 +317,57 @@ export default class Matches extends React.Component {
 
 					
 
-					<div className="jumbotron" id="playerSpecificStats">
-			    		<div className="h5">Player Specific Tournament Statistics</div>
+					<div style={{paddingTop: "2.5em"}} className="jumbotron" id="playerSpecificStats">
+						<div className="h5" >Player Specific Tournament Statistics - <b>{this.state.selectedPlayer}</b></div>
 					
-						<div className="h6">Player Name: {this.state.selectedPlayer}</div>
-						<div className="h6">Eliminated By: {this.state.eliminatedPlayer}</div>
+						<div style={{paddingTop: ".8em"}} className="h6">Eliminated By: {this.state.eliminatedPlayer}</div>
 
-						<div className="results-container" id="summaryStats">
-							{this.state.stats}
-						</div>
+						{this.state.stats}
+						
 
 			    		<div className="header-container">
 			    			<div className="headers" >
-								<div className="header"><strong>Name</strong></div>
+								<div className="header"><strong>Opponent</strong></div>
 								<div className="header"><strong>Round</strong></div>
-								<div className="header"><strong>Game Minutes</strong></div>
-								<div className="header"><strong>Point Seconds</strong></div>
-								<div className="header"><strong>Set Minutes</strong></div>
-								<div className="header"><strong>Winner</strong></div>
+								<div className="header"><strong>Minutes per Game</strong></div>
+								<div className="header"><strong>Seconds per Point</strong></div>
+								<div className="header"><strong>Minutes per Set</strong></div>
 							</div>
 			    		</div>
 			    		<div className="results-container" id="results1">
 			    			{this.state.opponents}
 			    		</div>
+
+						<Modal show={this.state.showModal} onHide={this.handleClose} size="lg">
+							<Modal.Header closeButton>
+							<Modal.Title>Match-Specific Statistics</Modal.Title>
+							</Modal.Header>
+
+							<Modal.Body>
+								<div style={{paddingTop: ".8em"}} className="h6">Match Minutes: {this.state.matchMinutes}</div>
+
+								<div className="header-container">
+
+								<div className="headers" >
+									<div className="header"><strong>Name</strong></div>
+									<div className="header"><strong>Sets</strong></div>
+									<div className="header"><strong>First Serve Won</strong></div>
+									<div className="header"><strong>Double Faults</strong></div>
+									<div className="header"><strong>Breakpoint Faced - Breakpoint Saved</strong></div>
+								</div>
+							</div>
+							<div className="results-container" id="results">
+								{this.state.matchDetails}
+							</div>
+
+							</Modal.Body>
+							<Modal.Footer>
+							<Button variant="secondary" onClick={this.handleClose}>
+								Close
+							</Button>
+							
+							</Modal.Footer>
+						</Modal>
 						
 			    	</div>
 			    </div>
