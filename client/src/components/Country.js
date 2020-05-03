@@ -196,7 +196,7 @@ export default class Country extends React.Component {
 				<div className="container bestgenres-container">
 			      <div className="jumbotron">
 			        <div className="h5">Player-Country Head-to-Head</div>
-					<PageNavbar2 active="head2head" />
+					<PageNavbar2 active="H2H between player and Country" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
 					  <DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Select A Letter!" variant="secondary" id="letterDropdown">

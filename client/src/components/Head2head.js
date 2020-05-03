@@ -195,7 +195,7 @@ export default class Head2head extends React.Component {
 				<div className="container bestgenres-container">
 			      <div className="jumbotron">
 			        <div className="h5">Head-to-Head</div>
-					<PageNavbar2 active="head2head" />
+					<PageNavbar2 active="H2H between players" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
 					  <DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Select A Letter!" variant="secondary" id="letterDropdown">

@@ -116,7 +116,7 @@ export default class BigThree extends React.Component {
 			  <div className="header"><strong>date</strong></div>
 				<div className="header"><strong>tournament</strong></div>
 				<div className="header"><strong>round</strong></div>
-				<div className="header"><strong>name(win or not)</strong></div>
+				<div className="header"><strong>winner/loser</strong></div>
 			  </div>
 			  <div className="movies-container" id="results">
 				{genrelist}
@@ -143,7 +143,7 @@ export default class BigThree extends React.Component {
 				<div className="container bestgenres-container">
 			      <div className="jumbotron">
 			        <div className="h5">Head-to-Head with Big Three</div>
-					<PageNavbar2 active="bigThree" />
+					<PageNavbar2 active="H2H between player and big three" />
 			        <div className="years-container">
 			          <div className="dropdown-container">
 					  <DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Select A Letter!" variant="secondary" id="letterDropdown">
