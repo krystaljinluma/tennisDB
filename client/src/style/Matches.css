@@ -12,7 +12,7 @@
 }
 
 .tournamentResults .name, .tournamentResults .rank, .tournamentResults .aces, .tournamentResults .winner, .tournamentResults .round, .headers .header {
-  flex: 1 0 20%;
+  flex: 1 0 16%;
 }
 
 .header-container, .jumbotron {
@@ -29,5 +29,5 @@
 
 
 .opponentInfo .name, .opponentInfo .round, .opponentInfo .game_minutes, .opponentInfo .point_seconds, .opponentInfo .set-minutes, .opponentInfo .winner {
-  flex: 1 16%
+  flex: 1 0 16%
 }

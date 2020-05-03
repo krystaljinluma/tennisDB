@@ -268,18 +268,7 @@ function getEliminatedBy(req, res) {
     }
   });
 }
-function getTopTen(req, res) {
 
-//   SELECT P.Name, P.Rank, S.total_pts, M.tournament, M.year,
-// FROM Match M
-// JOIN Stats S ON M.match_id = S.match_id
-// JOIN Player P ON P.player_id = S.player_id
-// WHERE S.player_id IN (SELECT P.player_id
-// 				FROM Player P
-// 				JOIN Stats S ON P.player_id = S.player_id
-// 				WHERE S.Rank <= 10)
-
-}
 
 function summarizeStats(req, res) {
   var tournament = req.params.tournament;
@@ -536,7 +525,6 @@ module.exports = {
   bestGenresPerDecade: bestGenresPerDecade,
   getMatchStats: getMatchStats,
   getPlayerStats: getPlayerStats,
-  getTopTen: getTopTen,
   summarizeStats: summarizeStats,
   getRounds: getRounds,
   getRoundStats: getRoundStats,

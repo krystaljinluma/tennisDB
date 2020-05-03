@@ -57,9 +57,13 @@ export default class Matches extends React.Component {
 		}).then(player => {
 			console.log(player);
 
-			this.setState({
+			if (player[0]) {
+				this.setState({
 				eliminatedPlayer: player[0].Name
-			});
+				});
+			}
+
+			
 		}); 
 
 		this.setState({

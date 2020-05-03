@@ -64,7 +64,6 @@ app.get('/eliminatedBy/:tournament/:year/:player', routes.getEliminatedBy)
 
 
 /* ---- (Top10 Player Matches) ---- */
-app.get('/topten', routes.getTopTen)
 
 /* ---- (Top10 Player Matches) ---- */
 app.get('/summarizetournament/:tournament/:year', routes.summarizeStats)
