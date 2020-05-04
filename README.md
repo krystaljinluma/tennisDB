@@ -11,7 +11,7 @@ Author: Matthew Ablonczy, Laurel Lee, Jinlu Ma, Zhongyu Shi
 7. Now you can use the webpage
 8. You can also open the webpage by typing the following address into the browser:<pre>http://localhost:3000</pre>
 
-## Dependencies Used:
+## Dependencies used:
 In Server:
 |  | dependency | version | 
 | --- | --- | --- |
