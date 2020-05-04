@@ -1,5 +1,5 @@
 # cis550
-Author: Matthew Ablonczy, Laurel Lee, Jinlu Ma, Zhongyu Shi
+Author: Matthew Ablonczy, Laurel Lee, Krystal Ma, Zhongyu Shi
 
 ## Build the application locally: 
 1. Check whether you already have "node" installed. Open the terminal  and type <pre>node -v; npm-v</pre> If the commands cannot be recognized, go to https://nodejs.org/en/download/ and download the newest Node.js for your system.
