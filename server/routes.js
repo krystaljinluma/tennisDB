@@ -33,7 +33,7 @@ function getGSWinsAndRank(req, res) {
 
   var query = `
   WITH player_matches AS(
-    SELECT *
+    SELECT player_id, match_id, winner, p_rank
 	  FROM Stats
 	  WHERE player_id = '${id}'
   ),
