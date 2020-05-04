@@ -2,7 +2,7 @@ import React from 'react';
 import MapContainer  from './MapContainer';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default class BestGenreRow extends React.Component {
+export default class Head2headRow extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -25,34 +25,34 @@ export default class BestGenreRow extends React.Component {
 		}, err => {
 		  // Print the error if there is one.
 		  console.log(err);
-		}).then(bestGenre => {
-			console.log(bestGenre);
+		}).then(matchdetails => {
+			console.log(matchdetails);
 			var templist = [];
 		templist.push(<table className = "details">
 		<tr>
-		  <td>{bestGenre[1].set1}</td>
+		  <td>{matchdetails[1].set1}</td>
 		  <td>Set1</td>
-		  <td>{bestGenre[0].set1}</td>
+		  <td>{matchdetails[0].set1}</td>
 		</tr>
 		<tr>
-		  <td>{bestGenre[1].set2}</td>
+		  <td>{matchdetails[1].set2}</td>
 		  <td>Set2</td>
-		  <td>{bestGenre[0].set2}</td>
+		  <td>{matchdetails[0].set2}</td>
 		</tr>
 		<tr>
-		  <td>{bestGenre[1].set3}</td>
+		  <td>{matchdetails[1].set3}</td>
 		  <td>Set3</td>
-		  <td>{bestGenre[0].set3}</td>
+		  <td>{matchdetails[0].set3}</td>
 		</tr>
 		<tr>
-		  <td>{bestGenre[1].set4}</td>
+		  <td>{matchdetails[1].set4}</td>
 		  <td>Set4</td>
-		  <td>{bestGenre[0].set4}</td>
+		  <td>{matchdetails[0].set4}</td>
 		</tr>
 		<tr>
-		  <td>{bestGenre[1].set5}</td>
+		  <td>{matchdetails[1].set5}</td>
 		  <td>Set5</td>
-		  <td>{bestGenre[0].set5}</td>
+		  <td>{matchdetails[0].set5}</td>
 		</tr>
 		
 	  </table>);
@@ -121,7 +121,7 @@ export default class BestGenreRow extends React.Component {
 	render() {
 		return (
 			<div className = "eachRow">
-			<div className="movieResults" onClick={this.handleChange}>
+			<div className="detailResults" onClick={this.handleChange}>
 				<div className="h2hinfo">{this.props.date}</div>
 				<div className="h2hinfo">{this.props.tournament}</div>
 				<div className = "h2hinfo">{this.props.round}</div>

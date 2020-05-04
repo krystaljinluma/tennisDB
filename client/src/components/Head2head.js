@@ -4,184 +4,178 @@ import PageNavbar2 from './PageNavbar2';
 import Head2headRow from './Head2headRow';
 import '../style/Head2head.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import { Dropdown, Button, Row, Col, Container} from 'react-bootstrap';
+import Select from 'react-select';
+
+
+const customControlStyles =  {control: base => ({
+	...base,
+    width: "100%",
+    cursor: "pointer"
+})};
 
 export default class Head2head extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			selectedDecade: "",
-			selectGenre: "",
+			selectedPlayer1: "",
+			selectedPlayer2:"",
 			selectLetter:"",
-			decades: [],
-			genres: [],
-			genereSelectList: [],
+			playerlist: [],
+			results: [],
+			player2List: [],
 			letterList : ["A","B","C","D","E","F","G","H","I",
 			"J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
 			optionLetterList : []
 		};
 
-		this.submitDecade = this.submitDecade.bind(this);
-		this.submitGenre = this.submitGenre.bind(this);
+		this.submitPlayer1 = this.submitPlayer1.bind(this);
+		this.submit2Players = this.submit2Players.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleChange2 = this.handleChange2.bind(this);
 	}
 
-	/* ---- Q3a (Best Genres) ---- */
+	//generate the letter list when program is on load
 	componentDidMount() {
 		let listOfLetter = [];
+		let newCandidateLetter = [];
 		for(var j = 0;j<26;j++){
 			listOfLetter.push(
-				<Dropdown.Item onClick={this.handleChange}>{this.state.letterList[j]}</Dropdown.Item>);
+			<option key={j} value={this.state.letterList[j]}>
+				{this.state.letterList[j]}
+			</option>);
+			newCandidateLetter.push({value: this.state.letterList[j],label: this.state.letterList[j]});
 		}
 		this.setState({
-			optionLetterList: listOfLetter
+			optionLetterList: newCandidateLetter
 		  });
 		
 	
 	}
 
 	handleChange(e) {
+		console.log(e);
 		this.setState({
-			selectLetter: e.target.textContent
+			selectLetter: e.value
 		});
-		var letter =  e.target.textContent;
+		var letter =  e.value;
 		fetch(`http://localhost:8081/players2/${letter}`,
 		{
-		  method: 'GET' // The type of HTTP request.
+		  method: 'GET' 
 		}).then(res => {
-		  // Convert the response data to a JSON.
 		  return res.json();
 		}, err => {
-		  // Print the error if there is one.
 		  console.log(err);
-		}).then(decadelist => {
-		  if (!decadelist) return;
-		  console.log(decadelist);
-		  // Map each genreObj in genreList to an HTML element:
-		  // A button which triggers the showMovies function for each genre.
-		  let decadeDivs = decadelist.map((eachdecade, i) =>
-		  <Dropdown.Item onClick={this.submitDecade}>{eachdecade.name}</Dropdown.Item>
-		   );
-		   console.log(decadeDivs);
+		}).then(playerlist1 => {
+		  if (!playerlist1) return;
+		  console.log(playerlist1);
+		  //adjust the HTML type to fix the value and label of "Select"
+		   let newCandidatePlayer = [];
+		   for (var i = 0;i<playerlist1.length;i++){
+			newCandidatePlayer.push({value: playerlist1[i].name,label: playerlist1[i].name});
+		   }
 		  
-	
-		  // Set the state of the genres list to the value returned by the HTTP response from the server.
+		//update the player list1
 		  this.setState({
-			decades: decadeDivs
+			playerlist: newCandidatePlayer
 		  });
 		}, err => {
-		  // Print the error if there is one.
+		  // Print the errors
 		  console.log(err);
 		});
 
 	}
 
+	//update selected player2
 	handleChange2(e) {
-		console.log(e.target.textContent);
+		console.log(e.value);
 		this.setState({
-			selectedGenre: e.target.textContent
+			selectedPlayer2: e.value
 		});
 	}
 
 
 
-
-	submitGenre(){
+	//submit 2 selected players to get the historic matches 
+	submit2Players(){
 		this.setState({
-			genres: []
+			results: []
 		  });
-		//console.log(this.state.selectedDecade);
-		//console.log(this.state.selectedGenre);
-		var selected = this.state.selectedDecade;
-		var selected2 = this.state.selectedGenre;
+		var selected = this.state.selectedPlayer1;
+		var selected2 = this.state.selectedPlayer2;
 		fetch(`http://localhost:8081/players2/${selected}/${selected2}`,
 		{
-		  method: 'GET' // The type of HTTP request.
+		  method: 'GET' 
 		}).then(res => {
-		  // Convert the response data to a JSON.
 		  return res.json();
 		}, err => {
-		  // Print the error if there is one.
+
 		  console.log(err);
-		}).then(bestGenre => {
-			console.log(bestGenre);
-			let genrelist = bestGenre.map((eachGenre,i)=>
+		}).then(resultList => {
+			console.log(resultList);
+			//generate the result list 
+			let genrelist = resultList.map((eachGenre,i)=>
 			<Head2headRow tournament={eachGenre.tournament} 
 			name = {eachGenre.name} date = {eachGenre.match_date.substring(0,10)} round = {eachGenre.round} 
 			match_id = {eachGenre.match_id}/>
 			);
 			var tempList = [];
+			//push the title and the result into tempList
 			tempList.push(
-			<div className="movies-container">
-			  <div className="movie">
-			  <div className="header"><strong>date</strong></div>
-				<div className="header"><strong>tournament</strong></div>
-				<div className="header"><strong>round</strong></div>
-				<div className="header"><strong>winner</strong></div>
+			<div className="matches-container">
+			  <div className="matchTitle">
+			  <div className="header"><strong>Date</strong></div>
+				<div className="header"><strong>Tournament</strong></div>
+				<div className="header"><strong>Round</strong></div>
+				<div className="header"><strong>Winner</strong></div>
 			  </div>
-			  <div className="movies-container" id="results">
+			  <div className="matches-container" id="results">
 				{genrelist}
 			  </div>
 			</div>);
+			//update the results to display them in the webpage
 			this.setState({
-				genres: tempList
+				results: tempList
 			  });
 
 		}, err => {
-		  // Print the error if there is one.
+		  // Print the errors
 		  console.log(err);
 		});
 
 
 	}
 
-	/* ---- Q3b (Best Genres) ---- */
-	submitDecade(e) {
-		console.log(e.target.textContent);
+	//submit the name of player1 to get all opponments in his career
+	submitPlayer1(e) {
+		console.log(e.value);
 		this.setState({
-			selectedDecade: e.target.textContent
+			selectedPlayer1: e.value
 		});
-		var selected =  e.target.textContent;
+		var selected =  e.value;
 		console.log('current state is '+selected);
 		fetch(`http://localhost:8081/spePlayer/${selected}`,
 		{
-		  method: 'GET' // The type of HTTP request.
+		  method: 'GET'
 		}).then(res => {
-		  // Convert the response data to a JSON.
 		  return res.json();
 		}, err => {
-		  // Print the error if there is one.
 		  console.log(err);
-		}).then(bestGenre => {
-		  // Set the state of the genres list to the value returned by the HTTP response from the server.
-		  // this.setState({
-		  //   genres: genreDivs
-		  // });
-		  //console.log(top10movie);
-		  console.log(bestGenre);
-		//   let genrelist = bestGenre.map((eachGenre,i)=>
-		//   <BestGenreRow genre={eachGenre.genre} 
-		//   avg_rating = {eachGenre.avg_rating} />
-		//   );
+		}).then(playerlist2 => {
+		  //get the player2 list that player1 met before
+		  console.log(playerlist2);
+		let newOptionList = [];
+		for (var i = 0;i<playerlist2.length;i++){
+			newOptionList.push({value: playerlist2[i].name,label: playerlist2[i].name});
+		}
 
-		  let newOptionList = bestGenre.map((eachGenre, j) =>
-<Dropdown.Item onClick={this.handleChange2}>{eachGenre.name}</Dropdown.Item>
-		   );
-	
-		//   console.log(genrelist);
-		//    this.setState({
-		// 	genres: genrelist
-		//   });
+		//update the player2 list 
 		  this.setState({
-			genereSelectList: newOptionList
+			player2List: newOptionList
 		  });
 
 		}, err => {
-		  // Print the error if there is one.
+		  // Print the errors
 		  console.log(err);
 		});
 		
@@ -190,27 +184,29 @@ export default class Head2head extends React.Component {
 	render() {
 
 		return (
-			<div className="BestGenres">
+			<div className="H2H">
 				<PageNavbar active="head2head" />
-				<div className="container bestgenres-container">
+				<div className="container h2hcontainer">
 			      <div className="jumbotron">
 			        <div className="h5">Head-to-Head</div>
 					<PageNavbar2 active="H2H between players" />
-			        <div className="years-container">
+			        <div className="player-match-container">
 			          <div className="dropdown-container">
-					  <DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Select A Letter!" variant="secondary" id="letterDropdown">
-								{this.state.optionLetterList}
-					</DropdownButton>
-					<DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Please select a player!" variant="secondary" id="play1Dropdown">
-								{this.state.decades}
-					</DropdownButton>
-					<DropdownButton as={ButtonGroup} style={{marginRight: "1em"}}  title = "Please select another player!" variant="secondary" id="play2Dropdown">
-								{this.state.genereSelectList}
-					</DropdownButton>
-						<button className="submit-btn" id="genreSubmitBtn" onClick={this.submitGenre}>Submit</button>
+
+					  <div className = "Select_bar">
+		
+					  <Select className = "a" placeholder = "Please Select A Letter!" options = {this.state.optionLetterList} onChange={this.handleChange} styles = {customControlStyles}/>
+
+					  <Select className = "b" placeholder = "Please Select A Player!" options = {this.state.playerlist} onChange={this.submitPlayer1} styles = {customControlStyles}/>
+
+					  <Select className = "b" placeholder = "Please Select Another Player!" options = {this.state.player2List} onChange={this.handleChange2} styles = {customControlStyles}/>
+					  
+					  <button className="submit-btn" id="h2hSubmitBtn" onClick={this.submit2Players}>Submit</button>
+					   </div>
+					   
 					  </div>
 			        </div>
-					{this.state.genres}
+					{this.state.results}
 			      </div>
 			    </div>
 			</div>
