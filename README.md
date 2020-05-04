@@ -1,7 +1,7 @@
 # cis550
 Author: Matthew Ablonczy, Laurel Lee, Jinlu Ma, Zhongyu Shi
 
-## Build the Application locally: 
+## Build the application locally: 
 1. Check whether you already have "node" installed. Open the terminal  and type <pre>node -v; npm-v</pre> If the commands cannot be recognized, go to https://nodejs.org/en/download/ and download the newest Node.js for your system.
 2. Check whether the folder "cis550-master" is in the zip file and uncompress it.
 3. Open a terminal and type <pre>cd #/cis550-master/Server</pre> Where "#" is the directory where the folder "cis550-master" locates
@@ -11,7 +11,7 @@ Author: Matthew Ablonczy, Laurel Lee, Jinlu Ma, Zhongyu Shi
 7. Now you can use the webpage
 8. You can also open the webpage by typing the following address into the browser:<pre>http://localhost:3000</pre>
 
-## Dependency Used:
+## Dependencies Used:
 In Server:
 |  | dependency | version | 
 | --- | --- | --- |
