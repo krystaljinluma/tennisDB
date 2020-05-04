@@ -24,14 +24,14 @@ In Client:
 |  | dependency | version | 
 | --- | --- | --- |
 |1 |bootstrap | ^4.4.1 | 
-|2|google-maps-react| ^2.0.6 |
-|4 | react | 16.12.0 | 
+|2 |google-maps-react| ^2.0.6 |
+|3 | react | 16.12.0 | 
 |4 | react-bootstrap | ^1.0.0-beta.16 | 
-|4 | react-dom | ^16.12.0 |
-|4 | react-dropdown | ^1.6.4 | 
-|4 | react-router-dom | ^5.1.2 | 
-|4 | react-scripts | 3.3.0 | 
-|4 | react-select | ^3.1.0 | 
+|5 | react-dom | ^16.12.0 |
+|6 | react-dropdown | ^1.6.4 | 
+|7 | react-router-dom | ^5.1.2 | 
+|8 | react-scripts | 3.3.0 | 
+|9 | react-select | ^3.1.0 | 
 
 For details, please see the file "package.json" file in "Server"/"Client" folder
 
