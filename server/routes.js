@@ -85,7 +85,7 @@ function getGSInfo(req, res) {
   });
 };
 
-/* ---- (GS Wins - Losses) ---- */
+/* ---- (Olympic Info) ---- */
 function getOlympicInfo(req, res) {
   var name = req.params.name;
 
