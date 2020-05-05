@@ -156,7 +156,8 @@ export default class Players extends React.Component {
 			if (!playerList) return;
 			//will only be one row produced here
 			if (playerList.length == 0) {
-				document.getElementById('dataFound').textContent = 'No data found for this player. Data is only for GS singles matches played from 2000 - 2019.';
+				document.getElementById('dataFound').textContent = 'No match data found for this player. Data is only for GS singles matches played from 2000 - 2019.';
+				this.getOlympicInfo();
 				return;
 			}
 			let gsInfoDiv = playerList.map((playerObj, i) =>
